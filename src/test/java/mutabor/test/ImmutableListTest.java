@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import mutabor.ImmutableList;
+import mutabor.Mutabor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +33,7 @@ public class ImmutableListTest {
 		System.out.println("checking for " + mutable.getClass().getName());
 		dump("mutable", mutable);
 		
-		ImmutableList<?> immutable = new ImmutableList<>(mutable);
+		ImmutableList<?> immutable = Mutabor.convertToImmutableList(mutable);
 		dump("immutable", immutable);
 		
 		//проверяем, что исходный список более неработоспособен, если expectConversion

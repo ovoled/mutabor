@@ -1,7 +1,9 @@
-package extlist;
+package mutabor.test;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import mutabor.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.Arrays;

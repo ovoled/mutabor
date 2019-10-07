@@ -11,6 +11,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * @author Aleksej Kozlov
+ */
 public class ImmutableListTest {
 	
 	@SuppressWarnings("static-method")

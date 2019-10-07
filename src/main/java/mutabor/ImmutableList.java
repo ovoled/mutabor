@@ -10,6 +10,11 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.RandomAccess;
 
+/**
+ * Immutable list implementation.
+ * @param <E> the type of elements in this list
+ * @author Aleksej Kozlov
+ */
 public class ImmutableList<E> implements ReadOnlyList<E>, RandomAccess, Cloneable, Serializable {
 	
 	private static final long serialVersionUID = 39387334160562704L;

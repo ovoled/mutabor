@@ -128,8 +128,8 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 	}
 	
 	protected class Itr implements Iterator<E> {
-		protected int fromIndex;
-		protected int toIndex;
+		protected final int fromIndex;
+		protected final int toIndex;
 		protected int cursor;
 		
 		protected Itr(int fromIndex, int toIndex) {
@@ -158,7 +158,7 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 		}
 	}
 	
-	protected class ListItr extends Itr implements ListIterator<E> { //TODO проверить - вероятно, работает неправильно
+	protected class ListItr extends Itr implements ListIterator<E> {
 		
 		protected ListItr(int fromIndex, int toIndex, int index) {
 			super(fromIndex, toIndex);
@@ -186,6 +186,7 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 			if (cursor < fromIndex + 1) {
 				throw new NoSuchElementException();
 			}
+			cursor--;
 			return (E) data[cursor];
 		}
 		

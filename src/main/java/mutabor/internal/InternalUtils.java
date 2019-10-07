@@ -13,6 +13,8 @@ import mutabor.internal.ImmutableListImpl;
  */
 public class InternalUtils {
 	
+	protected static final Object[] EMPTY_ARRAY = new Object[0];
+	
 	protected static final Field data_ArrayList; //TODO check thread safety
 	protected static final Class<?> class_Arrays$ArrayList;
 	protected static final Field data_Arrays$ArrayList;
@@ -32,7 +34,7 @@ public class InternalUtils {
 	public static <E> ImmutableList<E> copyToImmutableList(E[] original) {
 		Object[] arr;
 		if (original == null) {
-			arr = null;
+			arr = EMPTY_ARRAY;
 		} else {
 			arr = new Object[original.length];
 			System.arraycopy(original, 0, arr, 0, original.length);

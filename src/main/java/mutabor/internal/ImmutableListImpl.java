@@ -2,7 +2,6 @@ package mutabor.internal;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
@@ -19,12 +18,10 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 	
 	private static final long serialVersionUID = 39387334160562704L;
 	
-	protected static final Object[] EMPTY_ARRAY = new Object[0];
-	
 	protected final Object[] data;
 	
 	protected ImmutableListImpl(Object[] data) {
-		this.data = (data == null) ? EMPTY_ARRAY : data;
+		this.data = data;
 	}
 	
 	@Override
@@ -43,7 +40,7 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 	}
 	
 	@Override
-	public boolean containsAll(Collection<?> c) {
+	public boolean containsAll(Iterable<?> c) {
 		for (Object e : c) {
 			if (!contains(e)) {
 				return false;
@@ -115,7 +112,7 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 	@Override
 	public ListIterator<E> listIterator(int index) {
 		if (index < 0 || index > data.length) {
-			throw new IndexOutOfBoundsException("Index: "+index);
+			throw new IndexOutOfBoundsException("Index: " + index);
 		}
 		return new ListItr(0, data.length, index);
 	}
@@ -249,7 +246,7 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 		
 		
 		@Override
-		public boolean containsAll(Collection<?> c) {
+		public boolean containsAll(Iterable<?> c) {
 			for (Object e : c) {
 				if (!contains(e)) {
 					return false;

@@ -1,6 +1,7 @@
 package mutabor;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -46,6 +47,24 @@ public interface ReadOnlyList<E> extends ReadOnlyCollection<E> {
 	boolean contains(Object o);
 	
 	/**
+	 * Returns <tt>true</tt> if this list contains all of the elements of the
+	 * specified collection.
+	 *
+	 * @param c collection to be checked for containment in this list
+	 * @return <tt>true</tt> if this list contains all of the elements of the
+	 * specified collection
+	 * @throws ClassCastException if the types of one or more elements
+	 * in the specified collection are incompatible with this
+	 * list
+	 * @throws NullPointerException if the specified collection contains one
+	 * or more null elements and this list does not permit null
+	 * elements or if the specified collection is null
+	 * @see #contains(Object)
+	 */
+	@Override
+	boolean containsAll(Iterable<?> c);
+	
+	/**
 	 * Returns an iterator over the elements in this list in proper sequence.
 	 *
 	 * @return an iterator over the elements in this list in proper sequence
@@ -75,8 +94,8 @@ public interface ReadOnlyList<E> extends ReadOnlyCollection<E> {
 	/**
 	 * Returns an array containing all of the elements in this list in
 	 * proper sequence (from first to last element); the runtime type of
-	 * the returned array is that of the specified array.  If the list fits
-	 * in the specified array, it is returned therein.  Otherwise, a new
+	 * the returned array is that of the specified array. If the list fits
+	 * in the specified array, it is returned therein. Otherwise, a new
 	 * array is allocated with the runtime type of the specified array and
 	 * the size of this list.
 	 *
@@ -87,7 +106,7 @@ public interface ReadOnlyList<E> extends ReadOnlyCollection<E> {
 	 * the caller knows that the list does not contain any null elements.)
 	 *
 	 * <p>Like the {@link #toArray()} method, this method acts as bridge between
-	 * array-based and collection-based APIs.  Further, this method allows
+	 * array-based and collection-based APIs. Further, this method allows
 	 * precise control over the runtime type of the output array, and may,
 	 * under certain circumstances, be used to save allocation costs.
 	 *
@@ -185,9 +204,9 @@ public interface ReadOnlyList<E> extends ReadOnlyCollection<E> {
 	
 	/**
 	 * Returns a view of the portion of this list between the specified
-	 * <tt>fromIndex</tt>, inclusive, and <tt>toIndex</tt>, exclusive.  (If
+	 * <tt>fromIndex</tt>, inclusive, and <tt>toIndex</tt>, exclusive. (If
 	 * <tt>fromIndex</tt> and <tt>toIndex</tt> are equal, the returned list is
-	 * empty.)  The returned list is backed by this list, so non-structural
+	 * empty.) The returned list is backed by this list, so non-structural
 	 * changes in the returned list are reflected in this list, and vice-versa.
 	 * The returned list supports all of the optional list operations supported
 	 * by this list.<p>
@@ -206,7 +225,7 @@ public interface ReadOnlyList<E> extends ReadOnlyCollection<E> {
 	 *
 	 * The semantics of the list returned by this method become undefined if
 	 * the backing list (i.e., this list) is <i>structurally modified</i> in
-	 * any way other than via the returned list.  (Structural modifications are
+	 * any way other than via the returned list. (Structural modifications are
 	 * those that change the size of this list, or otherwise perturb it in such
 	 * a fashion that iterations in progress may yield incorrect results.)
 	 *

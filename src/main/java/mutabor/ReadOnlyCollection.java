@@ -42,6 +42,23 @@ public interface ReadOnlyCollection<E> extends Iterable<E> {
 	boolean contains(Object o);
 	
 	/**
+	 * Returns <tt>true</tt> if this collection contains all of the elements
+	 * in the specified collection.
+	 *
+	 * @param c collection to be checked for containment in this collection
+	 * @return <tt>true</tt> if this collection contains all of the elements
+	 * in the specified collection
+	 * @throws ClassCastException if the types of one or more elements
+	 * in the specified collection are incompatible with this
+	 * collection
+	 * @throws NullPointerException if the specified collection contains one
+	 * or more null elements and this collection does not permit null
+	 * elements or if the specified collection is null.
+	 * @see	#contains(Object)
+	 */
+	boolean containsAll(Iterable<?> c);
+	
+	/**
 	 * Returns an iterator over the elements in this collection. There are no
 	 * guarantees concerning the order in which the elements are returned
 	 * (unless this collection is an instance of some class that provides a
@@ -113,21 +130,4 @@ public interface ReadOnlyCollection<E> extends Iterable<E> {
 	 * @throws NullPointerException if the specified array is null
 	 */
 	<T> T[] toArray(T[] a);
-	
-	/**
-	 * Returns <tt>true</tt> if this collection contains all of the elements
-	 * in the specified collection.
-	 *
-	 * @param c collection to be checked for containment in this collection
-	 * @return <tt>true</tt> if this collection contains all of the elements
-	 * in the specified collection
-	 * @throws ClassCastException if the types of one or more elements
-	 * in the specified collection are incompatible with this
-	 * collection
-	 * @throws NullPointerException if the specified collection contains one
-	 * or more null elements and this collection does not permit null
-	 * elements or if the specified collection is null.
-	 * @see	#contains(Object)
-	 */
-	boolean containsAll(Collection<?> c);
 }

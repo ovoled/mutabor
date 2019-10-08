@@ -237,14 +237,13 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 		
 		@Override
 		public boolean isEmpty() {
-			return this.size == 0;
+			return this.size <= 0;
 		}
 		
 		@Override
 		public boolean contains(Object o) {
 			return indexOf(o) >= 0;
 		}
-		
 		
 		@Override
 		public boolean containsAll(Iterable<?> c) {
@@ -329,7 +328,7 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 		
 		@Override
 		public ListIterator<E> listIterator(int index) {
-			return new ListItr(fromIndex, toIndex, index);
+			return new ListItr(fromIndex, toIndex, fromIndex + index);
 		}
 		
 		@Override

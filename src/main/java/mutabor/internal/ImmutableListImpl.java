@@ -3,6 +3,7 @@ package mutabor.internal;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.RandomAccess;
@@ -339,6 +340,11 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 			return new SubList(fromIndex + fromIndexSub, fromIndex + toIndexSub);
 		}
 		
+		@Override
+		public List<E> toList() {
+			return new ListRepresentation<>(this);
+		}
+		
 		protected void rangeCheck(int index) {
 			if (index < 0 || index >= this.size) {
 				throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + this.size);
@@ -374,5 +380,10 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 			hashCode = 31 * hashCode + (e == null ? 0 : e.hashCode());
 		}
 		return hashCode;
+	}
+	
+	@Override
+	public List<E> toList() {
+		return new ListRepresentation<>(this);
 	}
 }

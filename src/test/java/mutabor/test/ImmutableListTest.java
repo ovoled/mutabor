@@ -113,6 +113,18 @@ public class ImmutableListTest {
 		Assert.assertEquals(listConverted, listDeserialized);
 	}
 	
+	@SuppressWarnings("static-method")
+	@Test
+	public void testToList() {
+		List<Long> listOriginal = makeList(100);
+		ImmutableList<Long> listConverted = Mutabor.copyToImmutableList(listOriginal);
+		Assert.assertTrue(equalLists(listOriginal, listConverted.toList()));
+		
+		List<Long> subListOriginal = listOriginal.subList(10, 90);
+		ImmutableList<Long> subListConverted = listConverted.subList(10, 90);
+		Assert.assertTrue(equalLists(subListOriginal, subListConverted.toList()));
+	}
+	
 	protected static List<Long> makeList(int size) {
 		List<Long> list = new ArrayList<>(size);
 		for (int i = 0; i < size; i++) {

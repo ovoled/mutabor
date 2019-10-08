@@ -1,5 +1,7 @@
 package mutabor;
 
+import java.util.List;
+
 /**
  * Immutable list.
  * @param <E> the type of elements in this list
@@ -43,4 +45,12 @@ public interface ImmutableList<E> extends ReadOnlyList<E> {
 	 */
 	@Override
 	ImmutableList<E> subList(int fromIndex, int toIndex);
+	
+	/**
+	 * Creates {@link java.util.List} representation of this list.
+	 * Representation is still read-only, all of it's modification methods
+	 * throws {@link java.lang.UnsupportedOperationException}.
+	 * @return representation
+	 */
+	List<E> toList();
 }

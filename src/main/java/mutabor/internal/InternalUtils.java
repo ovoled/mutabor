@@ -43,12 +43,14 @@ public class InternalUtils {
 		return new ImmutableListImpl<>(arr);
 	}
 	
+	public static <E> ImmutableList<E> copyToImmutableList(Collection<? extends E> original) {
+		return new ImmutableListImpl<>(original.toArray());
+	}
+	
 	public static <E> ImmutableList<E> convertToImmutableList(Collection<? extends E> original) {
 		Object[] arr = stealDataArray(original);
-		
 		if (arr == null) {
-			//либо получили не ArrayList, либо отобрать массив не получилось - копируем
-			arr = original.toArray();
+			return null;
 		}
 		
 		return new ImmutableListImpl<>(arr);

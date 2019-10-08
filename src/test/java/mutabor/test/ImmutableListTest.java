@@ -7,6 +7,11 @@ import mutabor.ImmutableList;
 import mutabor.Mutabor;
 import mutabor.ReadOnlyList;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -98,6 +103,23 @@ public class ImmutableListTest {
 		checkListIteratorBackward(list.listIterator(size), size, fOffset);
 	}
 	
+	@SuppressWarnings("static-method")
+	@Test
+	public void testSerialize() throws IOException, ClassNotFoundException {
+		List<Long> listOriginal = makeList(100000);
+		ImmutableList<Long> listConverted = Mutabor.convertToImmutableList(listOriginal);
+		byte[] data = serialize(listConverted);
+		@SuppressWarnings("unchecked")
+		ImmutableList<Long> listDeserialized = (ImmutableList<Long>) deserialize(data);
+		
+		int sizeConverted = listConverted.size();
+		int sizeDeserialized = listDeserialized.size();
+		Assert.assertEquals(sizeConverted, sizeDeserialized);
+		for (int i = 0; i < sizeConverted; i++) {
+			Assert.assertEquals(listConverted.get(i), listDeserialized.get(i));
+		}
+	}
+	
 	protected static List<Long> makeList(int size) {
 		List<Long> list = new ArrayList<>(size);
 		for (int i = 0; i < size; i++) {
@@ -148,6 +170,24 @@ public class ImmutableListTest {
 	
 	protected static long f(long x) {
 		return x * 59 + 348957;
+	}
+	
+	protected static byte[] serialize(Object obj) throws IOException {
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+				oos.writeObject(obj);
+				oos.flush();
+			}
+			return baos.toByteArray();
+		}
+	}
+	
+	protected static Object deserialize(byte[] data) throws ClassNotFoundException, IOException {
+		try (ByteArrayInputStream bais = new ByteArrayInputStream(data)) {
+			try (ObjectInputStream ois = new ObjectInputStream(bais)) {
+				return ois.readObject();
+			}
+		}
 	}
 	
 	protected static void dump(String title, Iterable<?> list) {

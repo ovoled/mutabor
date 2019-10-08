@@ -12,6 +12,7 @@ public class Mutabor {
 	
 	/**
 	 * Creates {@link ImmutableList} by copying original array.
+	 * If original array is null, returns empty list.
 	 * Copying procedure may be slow for big arrays.
 	 * @param original original array
 	 * @return immutable list
@@ -22,6 +23,7 @@ public class Mutabor {
 	
 	/**
 	 * Creates {@link ImmutableList} by copying original collection.
+	 * If original collection is null, returns empty list.
 	 * Copying procedure may be slow for big collections.
 	 * @param original original collection
 	 * @return immutable list
@@ -32,7 +34,9 @@ public class Mutabor {
 	
 	/**
 	 * Creates {@link ImmutableList} by converting original collection.
+	 * If original collection is null, returns empty list.
 	 * Converting procedure is fast but applicable only for {@link java.util.ArrayList} and {@link java.util.Arrays.ArrayList}.
+	 * After conversion original collection will be cleared and should no longer be used.
 	 * If fast conversion cannot be done, (slow) copying procedure will be used.
 	 * @param original original collection
 	 * @return immutable list
@@ -43,7 +47,9 @@ public class Mutabor {
 	
 	/**
 	 * Creates {@link ImmutableList} by converting original collection.
+	 * If original collection is null, returns empty list.
 	 * Converting procedure is fast but applicable only for {@link java.util.ArrayList} and {@link java.util.Arrays.ArrayList}.
+	 * After conversion original collection will be cleared and should no longer be used.
 	 * If fast conversion cannot be done, behaviour id determined by {@code strictFast} flag:
 	 * when {@code strictFast == false}, (slow) copying procedure will be used,
 	 * when {@code strictFast == true}, method returns null.

@@ -15,39 +15,64 @@ public class InternalUtils {
 	
 	protected static final Object[] EMPTY_ARRAY = new Object[0];
 	
-	protected static final Field data_ArrayList; //TODO check thread safety
+	protected static final Field data_ArrayList;
+	protected static final Field size_ArrayList;
+	static {
+		Field data;
+		Field size;
+		try {
+			data = ArrayList.class.getDeclaredField("elementData");
+			size = ArrayList.class.getDeclaredField("size");
+			data.setAccessible(true);
+			size.setAccessible(true);
+		} catch (@SuppressWarnings("unused") Exception e) {
+			data = null;
+			size = null;
+		}
+		data_ArrayList = data;
+		size_ArrayList = size;
+	}
+	
 	protected static final Class<?> class_Arrays$ArrayList;
 	protected static final Field data_Arrays$ArrayList;
 	static {
+		Class<?> clazz;
+		Field data;
 		try {
-			data_ArrayList = ArrayList.class.getDeclaredField("elementData");
-			data_ArrayList.setAccessible(true);
-			
-			class_Arrays$ArrayList = Class.forName("java.util.Arrays$ArrayList");
-			data_Arrays$ArrayList = class_Arrays$ArrayList.getDeclaredField("a");
-			data_Arrays$ArrayList.setAccessible(true);
-		} catch (NoSuchFieldException | SecurityException | ClassNotFoundException e) {
-			throw new IllegalStateException(e);
+			clazz = Class.forName("java.util.Arrays$ArrayList");
+			data = clazz.getDeclaredField("a");
+			data.setAccessible(true);
+		} catch (@SuppressWarnings("unused") Exception e) {
+			clazz = null;
+			data = null;
 		}
+		class_Arrays$ArrayList = clazz;
+		data_Arrays$ArrayList = data;
 	}
 	
 	public static <E> ImmutableList<E> copyToImmutableList(E[] original) {
-		Object[] arr;
 		if (original == null) {
-			arr = EMPTY_ARRAY;
-		} else {
-			arr = new Object[original.length];
-			System.arraycopy(original, 0, arr, 0, original.length);
+			return new ImmutableListImpl<>(EMPTY_ARRAY);
 		}
 		
+		Object[] arr = new Object[original.length];
+		System.arraycopy(original, 0, arr, 0, original.length);
 		return new ImmutableListImpl<>(arr);
 	}
 	
 	public static <E> ImmutableList<E> copyToImmutableList(Collection<? extends E> original) {
+		if (original == null) {
+			return new ImmutableListImpl<>(EMPTY_ARRAY);
+		}
+		
 		return new ImmutableListImpl<>(original.toArray());
 	}
 	
 	public static <E> ImmutableList<E> convertToImmutableList(Collection<? extends E> original) {
+		if (original == null) {
+			return new ImmutableListImpl<>(EMPTY_ARRAY);
+		}
+		
 		Object[] arr = stealDataArray(original);
 		if (arr == null) {
 			return null;
@@ -57,31 +82,32 @@ public class InternalUtils {
 	}
 	
 	protected static Object[] stealDataArray(Collection<?> original) {
-		Object [] arr;
 		if (original instanceof ArrayList) {
-			//грязный хак - отбираем у переданного списка его массив;
-			//переданный список намеренно делаем неработоспособным
-			
-			try {
-				arr = (Object[]) data_ArrayList.get(original);
-				data_ArrayList.set(original, null);
-			} catch (@SuppressWarnings("unused") IllegalArgumentException | IllegalAccessException e) {
-				arr = null;
+			if (data_ArrayList != null) {
+				try {
+					Object [] arr = (Object[]) data_ArrayList.get(original);
+					data_ArrayList.set(original, EMPTY_ARRAY);
+					size_ArrayList.set(original, Integer.valueOf(0));
+					return arr;
+				} catch (@SuppressWarnings("unused") Exception e) {
+					return null;
+				}
 			}
-		} else if (class_Arrays$ArrayList.isInstance(original)) {
-			//грязный хак - отбираем у переданного списка его массив;
-			//переданный список намеренно делаем неработоспособным
-			
-			try {
-				arr = (Object[]) data_Arrays$ArrayList.get(original);
-				data_Arrays$ArrayList.set(original, null);
-			} catch (@SuppressWarnings("unused") IllegalArgumentException | IllegalAccessException e) {
-				arr = null;
-			}
-		} else {
-			arr = null;
 		}
-		return arr;
+		
+		if (class_Arrays$ArrayList != null) {
+			try {
+				if (class_Arrays$ArrayList.isInstance(original)) {
+					Object [] arr = (Object[]) data_Arrays$ArrayList.get(original);
+					data_Arrays$ArrayList.set(original, EMPTY_ARRAY);
+					return arr;
+				}
+			} catch (@SuppressWarnings("unused") Exception e) {
+				return null;
+			}
+		}
+		
+		return null;
 	}
 	
 	private InternalUtils() {

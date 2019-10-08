@@ -15,6 +15,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -27,36 +28,26 @@ public class ImmutableListTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testConversion() {
-		List<Integer> mutable1 = Arrays.asList(Integer.valueOf(5), Integer.valueOf(4), Integer.valueOf(3), Integer.valueOf(2), Integer.valueOf(1), Integer.valueOf(0));
-		List<Integer> mutable2 = new ArrayList<>(mutable1);
-		List<Integer> mutable3 = new LinkedList<>(mutable1);
+		List<Integer> list1 = Arrays.asList(Integer.valueOf(5), Integer.valueOf(4), Integer.valueOf(3), Integer.valueOf(2), Integer.valueOf(1), Integer.valueOf(0));
+		List<Integer> list2 = new ArrayList<>(list1);
+		List<Integer> list3 = new LinkedList<>(list1);
 		
-		testConversionStep(mutable1, true);
-		testConversionStep(mutable2, true);
-		testConversionStep(mutable3, false);
+		testConversionStep(list1, true);
+		testConversionStep(list2, true);
+		testConversionStep(list3, false);
 	}
 	
-	protected static void testConversionStep(Collection<?> mutable, boolean expectConversion) {
-		System.out.println("checking for " + mutable.getClass().getName());
-		dump("mutable", mutable);
+	protected static void testConversionStep(Collection<?> original, boolean expectConversion) {
+		System.out.println("checking for " + original.getClass().getName());
+		dump("original", original);
 		
-		ImmutableList<?> immutable = Mutabor.convertToImmutableList(mutable);
+		ImmutableList<?> immutable = Mutabor.convertToImmutableList(original);
 		dump("immutable", immutable);
 		
-		//проверяем, что исходный список более неработоспособен, если expectConversion
-		try {
-			dump("mutable", mutable);
-			if (expectConversion) {
-				Assert.fail("expected NullPointerException");
-			}
-		} catch (NullPointerException e) {
-			if (expectConversion) {
-				System.out.println();
-				System.out.println(e + " - as expected");
-			} else {
-				throw e;
-			}
-		}
+		//проверяем, что исходный список очищен, если expectConversion
+		dump("original", original);
+		Assert.assertTrue(expectConversion ? original.isEmpty() : equalLists(original, immutable));
+		
 		System.out.println();
 	}
 	
@@ -192,6 +183,19 @@ public class ImmutableListTest {
 		}
 	}
 	
+	protected static boolean equalLists(Iterable<?> list1, Iterable<?> list2) {
+		Iterator<?> iter1 = list1.iterator();
+		Iterator<?> iter2 = list2.iterator();
+		while (iter1.hasNext() && iter2.hasNext()) {
+			Object o1 = iter1.next();
+			Object o2 = iter2.next();
+			if (!(o1 == null ? o2 == null : o1.equals(o2))) {
+				return false;
+			}
+		}
+		return !(iter1.hasNext() || iter2.hasNext());
+	}
+	
 	protected static void dump(String title, Iterable<?> list) {
 		System.out.print(title);
 		System.out.print(": ");
@@ -206,6 +210,4 @@ public class ImmutableListTest {
 			System.out.println(" }");
 		}
 	}
-	
-	//TODO тесты сериализации
 }

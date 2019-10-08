@@ -8,9 +8,11 @@ import java.util.NoSuchElementException;
 import java.util.RandomAccess;
 
 import mutabor.ImmutableList;
+import mutabor.ReadOnlyList;
 
 /**
  * Immutable list implementation.
+ * Based on sources of {@link java.util.ArrayList} and {@link java.util.AbstractList}.
  * @param <E> the type of elements in this list
  * @author Aleksej Kozlov
  */
@@ -342,5 +344,35 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 				throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + this.size);
 			}
 		}
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof ReadOnlyList)) {
+			return false;
+		}
+		
+		ListIterator<E> e1 = listIterator();
+		ListIterator<?> e2 = ((ReadOnlyList<?>) o).listIterator();
+		while (e1.hasNext() && e2.hasNext()) {
+			E o1 = e1.next();
+			Object o2 = e2.next();
+			if (!(o1 == null ? o2 == null : o1.equals(o2))) {
+				return false;
+			}
+		}
+		return !(e1.hasNext() || e2.hasNext());
+	}
+	
+	@Override
+	public int hashCode() {
+		int hashCode = 1;
+		for (E e : this) {
+			hashCode = 31 * hashCode + (e == null ? 0 : e.hashCode());
+		}
+		return hashCode;
 	}
 }

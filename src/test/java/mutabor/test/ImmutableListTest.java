@@ -118,6 +118,8 @@ public class ImmutableListTest {
 		for (int i = 0; i < sizeConverted; i++) {
 			Assert.assertEquals(listConverted.get(i), listDeserialized.get(i));
 		}
+		
+		Assert.assertEquals(listConverted, listDeserialized);
 	}
 	
 	protected static List<Long> makeList(int size) {

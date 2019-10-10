@@ -132,7 +132,7 @@ public class InternalUtils {
 		if (list1 == list2) {
 			return true;
 		}
-		if (!(list2 instanceof List<?> || list2 instanceof ImmutableList<?>)) {
+		if (!(list2 instanceof List<?> || list2 instanceof ReadOnlyList<?>)) {
 			return false;
 		}
 		return equalIterables(list1, (Iterable<?>) list2);

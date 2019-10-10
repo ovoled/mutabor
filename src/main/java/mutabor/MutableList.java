@@ -45,4 +45,20 @@ public interface MutableList<E> extends List<E> {
 	 */
 	@Override
 	MutableList<E> subList(int fromIndex, int toIndex);
+	
+	/**
+	 * Creates immutable snapshot of this list.
+	 * Snapshot is saved internally. Two calls of this method
+	 * will return the same object if list was not changed between calls.
+	 * Saved snapshot released when list is changed or
+	 * {@link #releaseSnapshot} is called.
+	 * @return immutable snapshot
+	 */
+	ImmutableList<E> snapshot();
+	
+	/**
+	 * Releases internally saved copy of snapshot.
+	 * May be used for reduce memory consumption.
+	 */
+	void releaseSnapshot();
 }

@@ -204,6 +204,27 @@ public class MutableListImpl<E> implements MutableList<E>, RandomAccess, Cloneab
 		return InternalUtils.hashCodeIterable(list);
 	}
 	
+	@Override
+	public ImmutableList<E> snapshot() {
+		if (immutable != null) {
+			return immutable;
+		}
+		
+		immutable = InternalUtils.convertToImmutableList(list);
+		if (immutable != null) {
+			list = null;
+			return immutable;
+		}
+		
+		immutable = InternalUtils.copyToImmutableList(list);
+		return immutable; 
+	}
+	
+	@Override
+	public void releaseSnapshot() {
+		beforeChange();
+	}
+	
 	protected void beforeChange() {
 		if (list == null) {
 			list = new ArrayList<>(immutable.toList());

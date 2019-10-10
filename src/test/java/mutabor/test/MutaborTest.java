@@ -55,7 +55,7 @@ public class MutaborTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testImmutableIterator() {
-		List<Long> listOriginal = makeList(100000);
+		List<Long> listOriginal = makeArrayList(100000);
 		int size = listOriginal.size();
 		
 		ImmutableList<Long> listConverted = Mutabor.convertToImmutableList(listOriginal);
@@ -98,7 +98,7 @@ public class MutaborTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testMutableIterator() {
-		List<Long> listOriginal = makeList(100000);
+		List<Long> listOriginal = makeArrayList(100000);
 		int size = listOriginal.size();
 		
 		MutableList<Long> listConverted = Mutabor.convertToMutableList(listOriginal);
@@ -141,7 +141,7 @@ public class MutaborTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testImmutableSerialize() throws IOException, ClassNotFoundException {
-		List<Long> listOriginal = makeList(100000);
+		List<Long> listOriginal = makeArrayList(100000);
 		ImmutableList<Long> listConverted = Mutabor.convertToImmutableList(listOriginal);
 		byte[] data = serialize(listConverted);
 		@SuppressWarnings("unchecked")
@@ -160,7 +160,7 @@ public class MutaborTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testMutableSerialize() throws IOException, ClassNotFoundException {
-		List<Long> listOriginal = makeList(100000);
+		List<Long> listOriginal = makeArrayList(100000);
 		MutableList<Long> listConverted = Mutabor.convertToMutableList(listOriginal);
 		byte[] data = serialize(listConverted);
 		@SuppressWarnings("unchecked")
@@ -179,7 +179,7 @@ public class MutaborTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testImmutableToList() {
-		List<Long> listOriginal = makeList(100);
+		List<Long> listOriginal = makeArrayList(100);
 		ImmutableList<Long> listConverted = Mutabor.copyToImmutableList(listOriginal);
 		Assert.assertEquals(listOriginal, listConverted.toList());
 		
@@ -191,7 +191,7 @@ public class MutaborTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testImmutableToMutable() {
-		List<Long> listOriginal = makeList(100);
+		List<Long> listOriginal = makeArrayList(100);
 		ImmutableList<Long> listImmutable = Mutabor.copyToImmutableList(listOriginal);
 		MutableList<Long> listMutable = listImmutable.mutable();
 		Assert.assertEquals(listImmutable, listMutable);
@@ -220,7 +220,7 @@ public class MutaborTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testEqualsHashCode() {
-		List<Long> listOriginal = makeList(100000);
+		List<Long> listOriginal = makeArrayList(100000);
 		ImmutableList<Long> listImmutable1 = Mutabor.copyToImmutableList(listOriginal);
 		ImmutableList<Long> listImmutable2 = Mutabor.copyToImmutableList(listOriginal);
 		MutableList<Long> listMutable1 = Mutabor.copyToMutableList(listOriginal);
@@ -247,12 +247,50 @@ public class MutaborTest {
 		Assert.assertEquals(subListOriginal.hashCode(), subListMutable.hashCode());
 	}
 	
-	protected static List<Long> makeList(int size) {
+	@SuppressWarnings("static-method")
+	@Test
+	public void testMutableSnapshot() {
+		List<Long> listOriginal1 = makeArrayList(100000);
+		testMutableSnapshotStep(Mutabor.copyToMutableList(listOriginal1));
+		testMutableSnapshotStep(Mutabor.convertToMutableList(listOriginal1));
+		
+		List<Long> listOriginal2 = makeLinkedList(100000);
+		testMutableSnapshotStep(Mutabor.copyToMutableList(listOriginal2));
+		testMutableSnapshotStep(Mutabor.convertToMutableList(listOriginal2));
+	}
+	
+	protected static void testMutableSnapshotStep(MutableList<Long> listMutable) {
+		ImmutableList<Long> snapshot1 = listMutable.snapshot();
+		Assert.assertEquals(listMutable, snapshot1);
+		ImmutableList<Long> snapshot2 = listMutable.snapshot();
+		Assert.assertTrue(snapshot1 == snapshot2);
+		listMutable.releaseSnapshot();
+		ImmutableList<Long> snapshot3 = listMutable.snapshot();
+		Assert.assertTrue(snapshot2 != snapshot3);
+		Assert.assertEquals(snapshot2, snapshot3);
+//		listMutable.add(Long.valueOf(-1)); //here MutableList should realize its mutability
+//		listMutable.remove(Long.valueOf(-1));
+//		ImmutableList<Long> snapshot4 = listMutable.snapshot();
+//		Assert.assertTrue(snapshot3 != snapshot4);
+//		Assert.assertEquals(snapshot3, snapshot4);
+	}
+	
+	protected static List<Long> makeArrayList(int size) {
 		List<Long> list = new ArrayList<>(size);
+		fillList(list, size);
+		return list;
+	}
+	
+	protected static List<Long> makeLinkedList(int size) {
+		List<Long> list = new LinkedList<>();
+		fillList(list, size);
+		return list;
+	}
+	
+	protected static void fillList(List<Long> list, int size) {
 		for (int i = 0; i < size; i++) {
 			list.add(Long.valueOf(f(i)));
 		}
-		return list;
 	}
 	
 	protected static void checkListByGet(ReadOnlyList<Long> list, int fOffset) {

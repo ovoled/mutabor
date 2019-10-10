@@ -190,6 +190,35 @@ public class MutaborTest {
 	
 	@SuppressWarnings("static-method")
 	@Test
+	public void testImmutableToMutable() {
+		List<Long> listOriginal = makeList(100);
+		ImmutableList<Long> listImmutable = Mutabor.copyToImmutableList(listOriginal);
+		MutableList<Long> listMutable = listImmutable.mutable();
+		Assert.assertEquals(listImmutable, listMutable);
+		
+		listMutable.add(Long.valueOf(-1)); //here MutableList should realize its mutability
+		listMutable.remove(Long.valueOf(-1));
+		Assert.assertEquals(listImmutable, listMutable);
+		
+		ImmutableList<Long> subListImmutable1 = listImmutable.subList(10, 90);
+		MutableList<Long> subListMutable1 = listMutable.subList(10, 90);
+		Assert.assertTrue(equalLists(subListImmutable1, subListMutable1));
+		
+		ImmutableList<Long> subListImmutable2 = subListImmutable1.subList(5, 65);
+		MutableList<Long> subListMutable2 = subListMutable1.subList(5, 65);
+		Assert.assertTrue(equalLists(subListImmutable2, subListMutable2));
+		
+		MutableList<Long> subListMutable2a = subListImmutable2.mutable();
+		Assert.assertTrue(equalLists(subListImmutable2, subListMutable2a));
+		Assert.assertTrue(equalLists(subListMutable2, subListMutable2a));
+		subListMutable2a.add(Long.valueOf(-1)); //here MutableList should realize its mutability
+		subListMutable2a.remove(Long.valueOf(-1));
+		Assert.assertTrue(equalLists(subListImmutable2, subListMutable2a));
+		Assert.assertTrue(equalLists(subListMutable2, subListMutable2a));
+	}
+	
+	@SuppressWarnings("static-method")
+	@Test
 	public void testEqualsHashCode() {
 		List<Long> listOriginal = makeList(100000);
 		ImmutableList<Long> listImmutable1 = Mutabor.copyToImmutableList(listOriginal);

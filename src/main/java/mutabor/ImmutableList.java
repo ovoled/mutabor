@@ -32,4 +32,10 @@ public interface ImmutableList<E> extends ReadOnlyList<E> {
 	 * @return representation
 	 */
 	List<E> toList();
+	
+	/**
+	 * Creates mutable copy of this list.
+	 * @return mutable copy
+	 */
+	MutableList<E> mutable();
 }

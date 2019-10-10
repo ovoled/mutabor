@@ -315,7 +315,9 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 		@SuppressWarnings("unchecked")
 		@Override
 		public E get(int index) {
-			rangeCheck(index);
+			if (index < 0 || index >= this.size) {
+				throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + this.size);
+			}
 			return (E) data[fromIndex + index];
 		}
 		
@@ -345,10 +347,9 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 			return new ListRepresentation<>(this);
 		}
 		
-		protected void rangeCheck(int index) {
-			if (index < 0 || index >= this.size) {
-				throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + this.size);
-			}
+		@Override
+		public MutableList<E> mutable() {
+			return new MutableListImpl<>(this);
 		}
 	}
 	
@@ -395,5 +396,10 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 	@Override
 	public List<E> toList() {
 		return new ListRepresentation<>(this);
+	}
+	
+	@Override
+	public MutableList<E> mutable() { 
+		return new MutableListImpl<>(this);
 	}
 }

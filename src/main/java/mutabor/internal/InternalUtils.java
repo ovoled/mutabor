@@ -77,12 +77,13 @@ public class InternalUtils {
 			return new ImmutableListImpl<>(EMPTY_ARRAY);
 		}
 		
+		int size = original.size();
 		Object[] arr = stealDataArray(original);
 		if (arr == null) {
 			return null;
 		}
 		
-		return new ImmutableListImpl<>(arr);
+		return new ImmutableListImpl<>(arr, size);
 	}
 	
 	public static <E> MutableList<E> copyToMutableList(Collection<? extends E> original) {

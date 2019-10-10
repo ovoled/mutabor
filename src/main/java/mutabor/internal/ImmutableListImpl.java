@@ -22,19 +22,25 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 	private static final long serialVersionUID = 39387334160562704L;
 	
 	protected final Object[] data;
+	protected final int size;
 	
 	protected ImmutableListImpl(Object[] data) {
+		this(data, data.length);
+	}
+	
+	protected ImmutableListImpl(Object[] data, int size) {
 		this.data = data;
+		this.size = size;
 	}
 	
 	@Override
 	public int size() {
-		return data.length;
+		return size;
 	}
 	
 	@Override
 	public boolean isEmpty() {
-		return data.length <= 0;
+		return size <= 0;
 	}
 	
 	@Override
@@ -55,13 +61,13 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 	@Override
 	public int indexOf(Object o) {
 		if (o == null) {
-			for (int i = 0; i < data.length; i++) {
+			for (int i = 0; i < size; i++) {
 				if (data[i] == null) {
 					return i;
 				}
 			}
 		} else {
-			for (int i = 0; i < data.length; i++) {
+			for (int i = 0; i < size; i++) {
 				if (o.equals(data[i])) {
 					return i;
 				}
@@ -73,13 +79,13 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 	@Override
 	public int lastIndexOf(Object o) {
 		if (o == null) {
-			for (int i = data.length - 1; i >= 0; i--) {
+			for (int i = size - 1; i >= 0; i--) {
 				if (data[i] == null) {
 					return i;
 				}
 			}
 		} else {
-			for (int i = data.length - 1; i >= 0; i--) {
+			for (int i = size - 1; i >= 0; i--) {
 				if (o.equals(data[i])) {
 					return i;
 				}
@@ -90,18 +96,18 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 	
 	@Override
 	public Object[] toArray() {
-		return Arrays.copyOf(data, data.length);
+		return Arrays.copyOf(data, size);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T[] toArray(T[] a) {
-		if (a.length < data.length) {
-			return (T[]) Arrays.copyOf(data, data.length, a.getClass());
+		if (a.length < size) {
+			return (T[]) Arrays.copyOf(data, size, a.getClass());
 		}
-		System.arraycopy(data, 0, a, 0, data.length);
-		if (a.length > data.length) {
-			a[data.length] = null;
+		System.arraycopy(data, 0, a, 0, size);
+		if (a.length > size) {
+			a[size] = null;
 		}
 		return a;
 	}
@@ -114,20 +120,20 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 	
 	@Override
 	public ListIterator<E> listIterator(int index) {
-		if (index < 0 || index > data.length) {
+		if (index < 0 || index > size) {
 			throw new IndexOutOfBoundsException("Index: " + index);
 		}
-		return new ListItr(0, data.length, index);
+		return new ListItr(0, size, index);
 	}
 	
 	@Override
 	public ListIterator<E> listIterator() {
-		return new ListItr(0, data.length, 0);
+		return new ListItr(0, size, 0);
 	}
 	
 	@Override
 	public Iterator<E> iterator() {
-		return new Itr(0, data.length);
+		return new Itr(0, size);
 	}
 	
 	protected class Itr implements Iterator<E> {
@@ -206,7 +212,7 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 	
 	@Override
 	public ImmutableList<E> subList(int fromIndex, int toIndex) {
-		subListRangeCheck(fromIndex, toIndex, data.length);
+		subListRangeCheck(fromIndex, toIndex, size);
 		return new SubList(fromIndex, toIndex);
 	}
 	
@@ -225,22 +231,22 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 	protected class SubList implements ImmutableList<E>, RandomAccess {
 		protected final int fromIndex;
 		protected final int toIndex;
-		protected final int size;
+		protected final int subSize;
 		
 		protected SubList(int fromIndex, int toIndex) {
 			this.fromIndex = fromIndex;
 			this.toIndex = toIndex;
-			this.size = toIndex - fromIndex;
+			this.subSize = toIndex - fromIndex;
 		}
 		
 		@Override
 		public int size() {
-			return this.size;
+			return this.subSize;
 		}
 		
 		@Override
 		public boolean isEmpty() {
-			return this.size <= 0;
+			return this.subSize <= 0;
 		}
 		
 		@Override
@@ -302,12 +308,12 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T> T[] toArray(T[] a) {
-			if (a.length < size) {
+			if (a.length < subSize) {
 				return (T[]) Arrays.copyOfRange(data, fromIndex, toIndex, a.getClass());
 			}
-			System.arraycopy(data, fromIndex, a, 0, size);
-			if (a.length > size) {
-				a[size] = null;
+			System.arraycopy(data, fromIndex, a, 0, subSize);
+			if (a.length > subSize) {
+				a[subSize] = null;
 			}
 			return a;
 		}
@@ -315,8 +321,8 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 		@SuppressWarnings("unchecked")
 		@Override
 		public E get(int index) {
-			if (index < 0 || index >= this.size) {
-				throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + this.size);
+			if (index < 0 || index >= this.subSize) {
+				throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + this.subSize);
 			}
 			return (E) data[fromIndex + index];
 		}
@@ -338,7 +344,7 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 		
 		@Override
 		public ImmutableList<E> subList(int fromIndexSub, int toIndexSub) {
-			subListRangeCheck(fromIndexSub, toIndexSub, size);
+			subListRangeCheck(fromIndexSub, toIndexSub, subSize);
 			return new SubList(fromIndex + fromIndexSub, fromIndex + toIndexSub);
 		}
 		

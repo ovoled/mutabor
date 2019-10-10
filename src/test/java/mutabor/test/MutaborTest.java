@@ -29,24 +29,31 @@ public class MutaborTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testImmutableConversion() {
+		List<Integer> list0 = Arrays.asList(Integer.valueOf(5), Integer.valueOf(4), Integer.valueOf(3), Integer.valueOf(2), Integer.valueOf(1), Integer.valueOf(0));
 		List<Integer> list1 = Arrays.asList(Integer.valueOf(5), Integer.valueOf(4), Integer.valueOf(3), Integer.valueOf(2), Integer.valueOf(1), Integer.valueOf(0));
 		List<Integer> list2 = new ArrayList<>(list1);
 		List<Integer> list3 = new LinkedList<>(list1);
 		
-		testImmutableConversionStep(list1, true);
-		testImmutableConversionStep(list2, true);
-		testImmutableConversionStep(list3, false);
+		list2.add(Integer.valueOf(-1));
+		list2.remove(Integer.valueOf(-1));
+		list3.add(Integer.valueOf(-1));
+		list3.remove(Integer.valueOf(-1));
+		
+		testImmutableConversionStep(list1, list0, true);
+		testImmutableConversionStep(list2, list0, true);
+		testImmutableConversionStep(list3, list0, false);
 	}
 	
-	protected static void testImmutableConversionStep(Collection<?> original, boolean expectConversion) {
+	protected static void testImmutableConversionStep(Collection<?> original, Collection<?> compareTarget, boolean expectConversion) {
 		System.out.println("checking for " + original.getClass().getName());
 		dump("original", original);
 		
 		ImmutableList<?> immutable = Mutabor.convertToImmutableList(original);
 		dump("immutable", immutable);
 		
-		//проверяем, что исходный список очищен, если expectConversion
 		dump("original", original);
+		Assert.assertTrue(InternalUtils.equalIterables(compareTarget, immutable));
+		//проверяем, что исходный список очищен, если expectConversion
 		Assert.assertTrue(expectConversion ? original.isEmpty() : InternalUtils.equalIterables(original, immutable));
 		
 		System.out.println();
@@ -268,11 +275,11 @@ public class MutaborTest {
 		ImmutableList<Long> snapshot3 = listMutable.snapshot();
 		Assert.assertTrue(snapshot2 != snapshot3);
 		Assert.assertEquals(snapshot2, snapshot3);
-//		listMutable.add(Long.valueOf(-1)); //here MutableList should realize its mutability
-//		listMutable.remove(Long.valueOf(-1));
-//		ImmutableList<Long> snapshot4 = listMutable.snapshot();
-//		Assert.assertTrue(snapshot3 != snapshot4);
-//		Assert.assertEquals(snapshot3, snapshot4);
+		listMutable.add(Long.valueOf(-1)); //here MutableList should realize its mutability
+		listMutable.remove(Long.valueOf(-1));
+		ImmutableList<Long> snapshot4 = listMutable.snapshot();
+		Assert.assertTrue(snapshot3 != snapshot4);
+		Assert.assertEquals(snapshot3, snapshot4);
 	}
 	
 	protected static List<Long> makeArrayList(int size) {

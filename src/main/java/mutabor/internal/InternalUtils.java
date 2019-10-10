@@ -3,8 +3,10 @@ package mutabor.internal;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import mutabor.ImmutableList;
+import mutabor.MutableList;
 import mutabor.internal.ImmutableListImpl;
 
 /**
@@ -79,6 +81,14 @@ public class InternalUtils {
 		}
 		
 		return new ImmutableListImpl<>(arr);
+	}
+	
+	public static <E> MutableList<E> copyToMutableList(Collection<? extends E> original) {
+		return new MutableListImpl<>(new ArrayList<>(original));
+	}
+	
+	public static <E> MutableList<E> convertToMutableList(List<E> original) {
+		return new MutableListImpl<>(original);
 	}
 	
 	protected static Object[] stealDataArray(Collection<?> original) {

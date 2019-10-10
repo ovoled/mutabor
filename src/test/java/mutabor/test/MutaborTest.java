@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import mutabor.ImmutableList;
+import mutabor.MutableList;
 import mutabor.Mutabor;
 import mutabor.ReadOnlyList;
 
@@ -23,21 +24,21 @@ import java.util.ListIterator;
 /**
  * @author Aleksej Kozlov
  */
-public class ImmutableListTest {
+public class MutaborTest {
 	
 	@SuppressWarnings("static-method")
 	@Test
-	public void testConversion() {
+	public void testImmutableConversion() {
 		List<Integer> list1 = Arrays.asList(Integer.valueOf(5), Integer.valueOf(4), Integer.valueOf(3), Integer.valueOf(2), Integer.valueOf(1), Integer.valueOf(0));
 		List<Integer> list2 = new ArrayList<>(list1);
 		List<Integer> list3 = new LinkedList<>(list1);
 		
-		testConversionStep(list1, true);
-		testConversionStep(list2, true);
-		testConversionStep(list3, false);
+		testImmutableConversionStep(list1, true);
+		testImmutableConversionStep(list2, true);
+		testImmutableConversionStep(list3, false);
 	}
 	
-	protected static void testConversionStep(Collection<?> original, boolean expectConversion) {
+	protected static void testImmutableConversionStep(Collection<?> original, boolean expectConversion) {
 		System.out.println("checking for " + original.getClass().getName());
 		dump("original", original);
 		
@@ -53,40 +54,40 @@ public class ImmutableListTest {
 	
 	@SuppressWarnings("static-method")
 	@Test
-	public void testIterator() {
+	public void testImmutableIterator() {
 		List<Long> listOriginal = makeList(100000);
 		int size = listOriginal.size();
 		
 		ImmutableList<Long> listConverted = Mutabor.convertToImmutableList(listOriginal);
-		testIteratorStep(listConverted, size, 0);
+		testImmutableIteratorStep(listConverted, size, 0);
 		
 		int from1 = 300;
 		int to1 = 99900;
 		ImmutableList<Long> subList1 = listConverted.subList(from1, to1);
-		testIteratorStep(subList1, to1 - from1, from1);
+		testImmutableIteratorStep(subList1, to1 - from1, from1);
 		
 		int from2 = 50;
 		int to2 = 99000;
 		ImmutableList<Long> subList2 = subList1.subList(from2, to2);
-		testIteratorStep(subList2, to2 - from2, from1 + from2);
+		testImmutableIteratorStep(subList2, to2 - from2, from1 + from2);
 		
 		int from3 = 77;
 		int to3 = to2 - from2;
 		ImmutableList<Long> subList3 = subList2.subList(from3, to3);
-		testIteratorStep(subList3, to3 - from3, from1 + from2 + from3);
+		testImmutableIteratorStep(subList3, to3 - from3, from1 + from2 + from3);
 		
 		int from4 = 0;
 		int to4 = 80000;
 		ImmutableList<Long> subList4 = subList3.subList(from4, to4);
-		testIteratorStep(subList4, to4 - from4, from1 + from2 + from3 + from4);
+		testImmutableIteratorStep(subList4, to4 - from4, from1 + from2 + from3 + from4);
 		
 		int from5 = 0;
 		int to5 = to4 - from4;
 		ImmutableList<Long> subList5 = subList4.subList(from5, to5);
-		testIteratorStep(subList5, to5 - from5, from1 + from2 + from3 + from4 + from5);
+		testImmutableIteratorStep(subList5, to5 - from5, from1 + from2 + from3 + from4 + from5);
 	}
 	
-	protected static void testIteratorStep(ImmutableList<Long> list, int size, int fOffset) {
+	protected static void testImmutableIteratorStep(ImmutableList<Long> list, int size, int fOffset) {
 		Assert.assertEquals(size, list.size());
 		checkListByGet(list, fOffset);
 		checkListByIterator(list, fOffset);
@@ -96,7 +97,50 @@ public class ImmutableListTest {
 	
 	@SuppressWarnings("static-method")
 	@Test
-	public void testSerialize() throws IOException, ClassNotFoundException {
+	public void testMutableIterator() {
+		List<Long> listOriginal = makeList(100000);
+		int size = listOriginal.size();
+		
+		MutableList<Long> listConverted = Mutabor.convertToMutableList(listOriginal);
+		testMutableIteratorStep(listConverted, size, 0);
+		
+		int from1 = 300;
+		int to1 = 99900;
+		MutableList<Long> subList1 = listConverted.subList(from1, to1);
+		testMutableIteratorStep(subList1, to1 - from1, from1);
+		
+		int from2 = 50;
+		int to2 = 99000;
+		MutableList<Long> subList2 = subList1.subList(from2, to2);
+		testMutableIteratorStep(subList2, to2 - from2, from1 + from2);
+		
+		int from3 = 77;
+		int to3 = to2 - from2;
+		MutableList<Long> subList3 = subList2.subList(from3, to3);
+		testMutableIteratorStep(subList3, to3 - from3, from1 + from2 + from3);
+		
+		int from4 = 0;
+		int to4 = 80000;
+		MutableList<Long> subList4 = subList3.subList(from4, to4);
+		testMutableIteratorStep(subList4, to4 - from4, from1 + from2 + from3 + from4);
+		
+		int from5 = 0;
+		int to5 = to4 - from4;
+		MutableList<Long> subList5 = subList4.subList(from5, to5);
+		testMutableIteratorStep(subList5, to5 - from5, from1 + from2 + from3 + from4 + from5);
+	}
+	
+	protected static void testMutableIteratorStep(MutableList<Long> list, int size, int fOffset) {
+		Assert.assertEquals(size, list.size());
+		checkListByGet(list, fOffset);
+		checkListByIterator(list, fOffset);
+		checkListIteratorForward(list.listIterator(), size, fOffset);
+		checkListIteratorBackward(list.listIterator(size), size, fOffset);
+	}
+	
+	@SuppressWarnings("static-method")
+	@Test
+	public void testImmutableSerialize() throws IOException, ClassNotFoundException {
 		List<Long> listOriginal = makeList(100000);
 		ImmutableList<Long> listConverted = Mutabor.convertToImmutableList(listOriginal);
 		byte[] data = serialize(listConverted);
@@ -115,7 +159,26 @@ public class ImmutableListTest {
 	
 	@SuppressWarnings("static-method")
 	@Test
-	public void testToList() {
+	public void testMutableSerialize() throws IOException, ClassNotFoundException {
+		List<Long> listOriginal = makeList(100000);
+		MutableList<Long> listConverted = Mutabor.convertToMutableList(listOriginal);
+		byte[] data = serialize(listConverted);
+		@SuppressWarnings("unchecked")
+		MutableList<Long> listDeserialized = (MutableList<Long>) deserialize(data);
+		
+		int sizeConverted = listConverted.size();
+		int sizeDeserialized = listDeserialized.size();
+		Assert.assertEquals(sizeConverted, sizeDeserialized);
+		for (int i = 0; i < sizeConverted; i++) {
+			Assert.assertEquals(listConverted.get(i), listDeserialized.get(i));
+		}
+		
+		Assert.assertEquals(listConverted, listDeserialized);
+	}
+	
+	@SuppressWarnings("static-method")
+	@Test
+	public void testImmutableToList() {
 		List<Long> listOriginal = makeList(100);
 		ImmutableList<Long> listConverted = Mutabor.copyToImmutableList(listOriginal);
 		Assert.assertTrue(equalLists(listOriginal, listConverted.toList()));
@@ -123,6 +186,29 @@ public class ImmutableListTest {
 		List<Long> subListOriginal = listOriginal.subList(10, 90);
 		ImmutableList<Long> subListConverted = listConverted.subList(10, 90);
 		Assert.assertTrue(equalLists(subListOriginal, subListConverted.toList()));
+	}
+	
+	@SuppressWarnings("static-method")
+	@Test
+	public void testEqualsHashCode() {
+		List<Long> listOriginal = makeList(100000);
+		ImmutableList<Long> listImmutable1 = Mutabor.copyToImmutableList(listOriginal);
+		ImmutableList<Long> listImmutable2 = Mutabor.copyToImmutableList(listOriginal);
+		MutableList<Long> listMutable1 = Mutabor.copyToMutableList(listOriginal);
+		MutableList<Long> listMutable2 = Mutabor.copyToMutableList(listOriginal);
+		
+		Assert.assertEquals(listImmutable1, listImmutable2);
+		Assert.assertEquals(listMutable1, listMutable2);
+		Assert.assertEquals(listImmutable1, listMutable1);
+		Assert.assertEquals(listMutable1, listImmutable1);
+		Assert.assertEquals(listImmutable1, listOriginal); //listImmutable1.equals(listOriginal) but not listOriginal.equals(listImmutable1)
+		Assert.assertEquals(listMutable1, listOriginal);
+		
+		Assert.assertEquals(listImmutable1.hashCode(), listImmutable2.hashCode());
+		Assert.assertEquals(listMutable1.hashCode(), listMutable2.hashCode());
+		Assert.assertEquals(listImmutable1.hashCode(), listMutable1.hashCode());
+		Assert.assertEquals(listOriginal.hashCode(), listImmutable1.hashCode());
+		Assert.assertEquals(listOriginal.hashCode(), listMutable1.hashCode());
 	}
 	
 	protected static List<Long> makeList(int size) {
@@ -134,6 +220,15 @@ public class ImmutableListTest {
 	}
 	
 	protected static void checkListByGet(ReadOnlyList<Long> list, int fOffset) {
+		int size = list.size();
+		for (int i = 0; i < size; i++) {
+			Long item = list.get(i);
+			Assert.assertNotNull(item);
+			Assert.assertEquals(f(i + fOffset), item.longValue());
+		}
+	}
+	
+	protected static void checkListByGet(List<Long> list, int fOffset) {
 		int size = list.size();
 		for (int i = 0; i < size; i++) {
 			Long item = list.get(i);

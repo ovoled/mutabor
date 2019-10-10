@@ -1,6 +1,7 @@
 package mutabor;
 
 import java.util.Collection;
+import java.util.List;
 
 import mutabor.internal.InternalUtils;
 
@@ -64,6 +65,27 @@ public class Mutabor {
 		}
 		
 		return strictFast ? null : InternalUtils.copyToImmutableList(original);
+	}
+	
+	/**
+	 * Creates {@link MutableList} by copying original collection.
+	 * If original collection is null, returns empty list.
+	 * Copying procedure may be slow for big collections.
+	 * @param original original collection
+	 * @return mutable list
+	 */
+	public static <E> MutableList<E> copyToMutableList(Collection<? extends E> original) {
+		return InternalUtils.copyToMutableList(original);
+	}
+	
+	/**
+	 * Creates {@link MutableList} by wrapping original list.
+	 * If original collection is null, returns empty list.
+	 * @param original original list
+	 * @return mutable list
+	 */
+	public static <E> MutableList<E> convertToMutableList(List<E> original) {
+		return InternalUtils.convertToMutableList(original);
 	}
 	
 	private Mutabor() {

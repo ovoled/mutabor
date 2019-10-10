@@ -9,7 +9,7 @@ import java.util.NoSuchElementException;
 import java.util.RandomAccess;
 
 import mutabor.ImmutableList;
-import mutabor.ReadOnlyList;
+import mutabor.MutableList;
 
 /**
  * Immutable list implementation.
@@ -357,12 +357,19 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 		if (o == this) {
 			return true;
 		}
-		if (!(o instanceof ReadOnlyList)) {
+		
+		ListIterator<?> e2;
+		if (o instanceof List<?>) {
+			e2 = ((List<?>) o).listIterator();
+		} else if (o instanceof ImmutableList<?>) {
+			e2 = ((ImmutableList<?>) o).listIterator();
+		} else if (o instanceof MutableList<?>) {
+			e2 = ((MutableList<?>) o).listIterator();
+		} else {
 			return false;
 		}
 		
 		ListIterator<E> e1 = listIterator();
-		ListIterator<?> e2 = ((ReadOnlyList<?>) o).listIterator();
 		while (e1.hasNext() && e2.hasNext()) {
 			E o1 = e1.next();
 			Object o2 = e2.next();
@@ -375,6 +382,9 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 	
 	@Override
 	public int hashCode() {
+		//in order MutableListImpl.hashCode() to work correctly,
+		//this method must be identical to ArrayList.hashCode()
+		
 		int hashCode = 1;
 		for (E e : this) {
 			hashCode = 31 * hashCode + (e == null ? 0 : e.hashCode());

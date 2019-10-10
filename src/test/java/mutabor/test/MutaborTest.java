@@ -20,11 +20,17 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Random;
 
 /**
  * @author Aleksej Kozlov
  */
 public class MutaborTest {
+	
+	protected static final int N_BIG = 100000;
+	protected static final int N_SMALL = 1000;
+	
+	protected static Random random = new Random();
 	
 	@SuppressWarnings("static-method")
 	@Test
@@ -62,34 +68,34 @@ public class MutaborTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testImmutableIterator() {
-		List<Long> listOriginal = makeArrayList(100000);
+		List<Long> listOriginal = makeArrayList(N_BIG);
 		int size = listOriginal.size();
 		
 		ImmutableList<Long> listConverted = Mutabor.convertToImmutableList(listOriginal);
 		testImmutableIteratorStep(listConverted, size, 0);
 		
-		int from1 = 300;
-		int to1 = 99900;
+		int from1 = random.nextInt(100) + 1;
+		int to1 = size - 1 - random.nextInt(100);
 		ImmutableList<Long> subList1 = listConverted.subList(from1, to1);
 		testImmutableIteratorStep(subList1, to1 - from1, from1);
 		
-		int from2 = 50;
-		int to2 = 99000;
+		int from2 = random.nextInt(100) + 1;
+		int to2 = to1 - from1 - 1 - random.nextInt(100);
 		ImmutableList<Long> subList2 = subList1.subList(from2, to2);
 		testImmutableIteratorStep(subList2, to2 - from2, from1 + from2);
 		
-		int from3 = 77;
-		int to3 = to2 - from2;
+		int from3 = random.nextInt(100) + 1;
+		int to3 = to2 - from2; //to end of the list
 		ImmutableList<Long> subList3 = subList2.subList(from3, to3);
 		testImmutableIteratorStep(subList3, to3 - from3, from1 + from2 + from3);
 		
-		int from4 = 0;
-		int to4 = 80000;
+		int from4 = 0; //from begin of the list
+		int to4 = to3 - from3 - 1 - random.nextInt(100);
 		ImmutableList<Long> subList4 = subList3.subList(from4, to4);
 		testImmutableIteratorStep(subList4, to4 - from4, from1 + from2 + from3 + from4);
 		
-		int from5 = 0;
-		int to5 = to4 - from4;
+		int from5 = 0; //from begin of the list
+		int to5 = to4 - from4; //to end of the list
 		ImmutableList<Long> subList5 = subList4.subList(from5, to5);
 		testImmutableIteratorStep(subList5, to5 - from5, from1 + from2 + from3 + from4 + from5);
 	}
@@ -105,39 +111,43 @@ public class MutaborTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testMutableIterator() {
-		List<Long> listOriginal = makeArrayList(100000);
+		testMutableIteratorStep(makeArrayList(N_BIG));
+		testMutableIteratorStep(makeLinkedList(N_SMALL));
+	}
+	
+	protected static void testMutableIteratorStep(List<Long> listOriginal) {
 		int size = listOriginal.size();
 		
 		MutableList<Long> listConverted = Mutabor.convertToMutableList(listOriginal);
-		testMutableIteratorStep(listConverted, size, 0);
+		testMutableIteratorSubStep(listConverted, size, 0);
 		
-		int from1 = 300;
-		int to1 = 99900;
+		int from1 = random.nextInt(100) + 1;
+		int to1 = size - 1 - random.nextInt(100);
 		MutableList<Long> subList1 = listConverted.subList(from1, to1);
-		testMutableIteratorStep(subList1, to1 - from1, from1);
+		testMutableIteratorSubStep(subList1, to1 - from1, from1);
 		
-		int from2 = 50;
-		int to2 = 99000;
+		int from2 = random.nextInt(100) + 1;
+		int to2 = to1 - from1 - 1 - random.nextInt(100);
 		MutableList<Long> subList2 = subList1.subList(from2, to2);
-		testMutableIteratorStep(subList2, to2 - from2, from1 + from2);
+		testMutableIteratorSubStep(subList2, to2 - from2, from1 + from2);
 		
-		int from3 = 77;
-		int to3 = to2 - from2;
+		int from3 = random.nextInt(100) + 1;
+		int to3 = to2 - from2; //to end of the list
 		MutableList<Long> subList3 = subList2.subList(from3, to3);
-		testMutableIteratorStep(subList3, to3 - from3, from1 + from2 + from3);
+		testMutableIteratorSubStep(subList3, to3 - from3, from1 + from2 + from3);
 		
-		int from4 = 0;
-		int to4 = 80000;
+		int from4 = 0; //from begin of the list
+		int to4 = to3 - from3 - 1 - random.nextInt(100);
 		MutableList<Long> subList4 = subList3.subList(from4, to4);
-		testMutableIteratorStep(subList4, to4 - from4, from1 + from2 + from3 + from4);
+		testMutableIteratorSubStep(subList4, to4 - from4, from1 + from2 + from3 + from4);
 		
-		int from5 = 0;
-		int to5 = to4 - from4;
+		int from5 = 0; //from begin of the list
+		int to5 = to4 - from4; //to end of the list
 		MutableList<Long> subList5 = subList4.subList(from5, to5);
-		testMutableIteratorStep(subList5, to5 - from5, from1 + from2 + from3 + from4 + from5);
+		testMutableIteratorSubStep(subList5, to5 - from5, from1 + from2 + from3 + from4 + from5);
 	}
 	
-	protected static void testMutableIteratorStep(MutableList<Long> list, int size, int fOffset) {
+	protected static void testMutableIteratorSubStep(MutableList<Long> list, int size, int fOffset) {
 		Assert.assertEquals(size, list.size());
 		checkListByGet(list, fOffset);
 		checkListByIterator(list, fOffset);
@@ -148,7 +158,11 @@ public class MutaborTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testImmutableSerialize() throws IOException, ClassNotFoundException {
-		List<Long> listOriginal = makeArrayList(100000);
+		testImmutableSerializeStep(makeArrayList(N_BIG));
+		testImmutableSerializeStep(makeLinkedList(N_BIG));
+	}
+	
+	protected static void testImmutableSerializeStep(List<Long> listOriginal) throws IOException, ClassNotFoundException {
 		ImmutableList<Long> listConverted = Mutabor.convertToImmutableList(listOriginal);
 		byte[] data = serialize(listConverted);
 		@SuppressWarnings("unchecked")
@@ -167,7 +181,11 @@ public class MutaborTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testMutableSerialize() throws IOException, ClassNotFoundException {
-		List<Long> listOriginal = makeArrayList(100000);
+		testMutableSerializeStep(makeArrayList(N_BIG));
+		testMutableSerializeStep(makeLinkedList(N_SMALL)); //serialization of big LinkedLists is slow
+	}
+	
+	protected static void testMutableSerializeStep(List<Long> listOriginal) throws IOException, ClassNotFoundException {
 		MutableList<Long> listConverted = Mutabor.convertToMutableList(listOriginal);
 		byte[] data = serialize(listConverted);
 		@SuppressWarnings("unchecked")
@@ -186,19 +204,21 @@ public class MutaborTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testImmutableToList() {
-		List<Long> listOriginal = makeArrayList(100);
+		List<Long> listOriginal = makeArrayList(N_SMALL);
 		ImmutableList<Long> listConverted = Mutabor.copyToImmutableList(listOriginal);
 		Assert.assertEquals(listOriginal, listConverted.toList());
 		
-		List<Long> subListOriginal = listOriginal.subList(10, 90);
-		ImmutableList<Long> subListConverted = listConverted.subList(10, 90);
+		int from = random.nextInt(10) + 1;
+		int to = listOriginal.size() - 1 - random.nextInt(10);
+		List<Long> subListOriginal = listOriginal.subList(from, to);
+		ImmutableList<Long> subListConverted = listConverted.subList(from, to);
 		Assert.assertEquals(subListOriginal, subListConverted.toList());
 	}
 	
 	@SuppressWarnings("static-method")
 	@Test
 	public void testImmutableToMutable() {
-		List<Long> listOriginal = makeArrayList(100);
+		List<Long> listOriginal = makeArrayList(N_SMALL);
 		ImmutableList<Long> listImmutable = Mutabor.copyToImmutableList(listOriginal);
 		MutableList<Long> listMutable = listImmutable.mutable();
 		Assert.assertEquals(listImmutable, listMutable);
@@ -207,12 +227,16 @@ public class MutaborTest {
 		listMutable.remove(Long.valueOf(-1));
 		Assert.assertEquals(listImmutable, listMutable);
 		
-		ImmutableList<Long> subListImmutable1 = listImmutable.subList(10, 90);
-		MutableList<Long> subListMutable1 = listMutable.subList(10, 90);
+		int from1 = random.nextInt(10) + 1;
+		int to1 = listOriginal.size() - 1 - random.nextInt(10);
+		ImmutableList<Long> subListImmutable1 = listImmutable.subList(from1, to1);
+		MutableList<Long> subListMutable1 = listMutable.subList(from1, to1);
 		Assert.assertEquals(subListImmutable1, subListMutable1);
 		
-		ImmutableList<Long> subListImmutable2 = subListImmutable1.subList(5, 65);
-		MutableList<Long> subListMutable2 = subListMutable1.subList(5, 65);
+		int from2 = random.nextInt(10) + 1;
+		int to2 = to1 - from1 - 1 - random.nextInt(10);
+		ImmutableList<Long> subListImmutable2 = subListImmutable1.subList(from2, to2);
+		MutableList<Long> subListMutable2 = subListMutable1.subList(from2, to2);
 		Assert.assertEquals(subListImmutable2, subListMutable2);
 		
 		MutableList<Long> subListMutable2a = subListImmutable2.mutable();
@@ -227,11 +251,42 @@ public class MutaborTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testEqualsHashCode() {
-		List<Long> listOriginal = makeArrayList(100000);
+		List<Long> listOriginal = makeArrayList(N_BIG);
+		List<Long> listOriginalLinked = makeLinkedList(N_BIG);
 		ImmutableList<Long> listImmutable1 = Mutabor.copyToImmutableList(listOriginal);
 		ImmutableList<Long> listImmutable2 = Mutabor.copyToImmutableList(listOriginal);
-		MutableList<Long> listMutable1 = Mutabor.copyToMutableList(listOriginal);
-		MutableList<Long> listMutable2 = Mutabor.copyToMutableList(listOriginal);
+		
+		testEqualsHashCodeStep(
+				listOriginal,
+				listImmutable1, listImmutable2,
+				Mutabor.copyToMutableList(listOriginal),
+				Mutabor.copyToMutableList(listOriginal));
+		testEqualsHashCodeStep(
+				listOriginal,
+				listImmutable1, listImmutable2,
+				Mutabor.convertToMutableList(listOriginal),
+				Mutabor.convertToMutableList(listOriginal));
+		testEqualsHashCodeStep(
+				listOriginalLinked,
+				listImmutable1, listImmutable2,
+				Mutabor.convertToMutableList(listOriginalLinked),
+				Mutabor.convertToMutableList(listOriginalLinked));
+		testEqualsHashCodeStep(
+				listOriginal,
+				listImmutable1, listImmutable2,
+				Mutabor.convertToMutableList(listOriginal),
+				Mutabor.convertToMutableList(listOriginalLinked));
+		testEqualsHashCodeStep(
+				listOriginalLinked,
+				listImmutable1, listImmutable2,
+				Mutabor.convertToMutableList(listOriginal),
+				Mutabor.convertToMutableList(listOriginalLinked));
+	}
+	
+	protected static void testEqualsHashCodeStep(
+			List<Long> listOriginal,
+			ImmutableList<Long> listImmutable1, ImmutableList<Long> listImmutable2,
+			MutableList<Long> listMutable1, MutableList<Long> listMutable2) {
 		
 		Assert.assertEquals(listImmutable1, listImmutable2);
 		Assert.assertEquals(listMutable1, listMutable2);
@@ -246,9 +301,11 @@ public class MutaborTest {
 		Assert.assertEquals(listOriginal.hashCode(), listImmutable1.hashCode());
 		Assert.assertEquals(listOriginal.hashCode(), listMutable1.hashCode());
 		
-		List<Long> subListOriginal = listOriginal.subList(10, listOriginal.size() - 10);
-		ImmutableList<Long> subListImmutable = listImmutable1.subList(10, listImmutable1.size() - 10);
-		MutableList<Long> subListMutable = listMutable1.subList(10, listMutable1.size() - 10);
+		int from = random.nextInt(10) + 1;
+		int to = listOriginal.size() - 1 - random.nextInt(10);
+		List<Long> subListOriginal = listOriginal.subList(from, to);
+		ImmutableList<Long> subListImmutable = listImmutable1.subList(from, to);
+		MutableList<Long> subListMutable = listMutable1.subList(from, to);
 		
 		Assert.assertEquals(subListOriginal.hashCode(), subListImmutable.hashCode());
 		Assert.assertEquals(subListOriginal.hashCode(), subListMutable.hashCode());
@@ -257,11 +314,11 @@ public class MutaborTest {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testMutableSnapshot() {
-		List<Long> listOriginal1 = makeArrayList(100000);
+		List<Long> listOriginal1 = makeArrayList(N_BIG);
 		testMutableSnapshotStep(Mutabor.copyToMutableList(listOriginal1));
 		testMutableSnapshotStep(Mutabor.convertToMutableList(listOriginal1));
 		
-		List<Long> listOriginal2 = makeLinkedList(100000);
+		List<Long> listOriginal2 = makeLinkedList(N_BIG);
 		testMutableSnapshotStep(Mutabor.copyToMutableList(listOriginal2));
 		testMutableSnapshotStep(Mutabor.convertToMutableList(listOriginal2));
 	}

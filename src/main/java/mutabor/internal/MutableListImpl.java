@@ -190,38 +190,18 @@ public class MutableListImpl<E> implements MutableList<E>, RandomAccess, Cloneab
 	
 	@Override
 	public boolean equals(Object o) {
-		if (o == this) {
-			return true;
+		if (immutable != null) {
+			return InternalUtils.equalLists(immutable, o);
 		}
-		
-		ListIterator<?> e2;
-		if (o instanceof List<?>) {
-			e2 = ((List<?>) o).listIterator();
-		} else if (o instanceof ImmutableList<?>) {
-			e2 = ((ImmutableList<?>) o).listIterator();
-		} else if (o instanceof MutableList<?>) {
-			e2 = ((MutableList<?>) o).listIterator();
-		} else {
-			return false;
-		}
-		
-		ListIterator<E> e1 = listIterator();
-		while (e1.hasNext() && e2.hasNext()) {
-			E o1 = e1.next();
-			Object o2 = e2.next();
-			if (!(o1 == null ? o2 == null : o1.equals(o2))) {
-				return false;
-			}
-		}
-		return !(e1.hasNext() || e2.hasNext());
+		return InternalUtils.equalLists(list, o);
 	}
 	
 	@Override
 	public int hashCode() {
 		if (immutable != null) {
-			return immutable.hashCode();
+			return InternalUtils.hashCodeIterable(immutable);
 		}
-		return list.hashCode();
+		return InternalUtils.hashCodeIterable(list);
 	}
 	
 	protected void beforeChange() {

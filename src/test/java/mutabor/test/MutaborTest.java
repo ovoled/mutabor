@@ -7,6 +7,7 @@ import mutabor.ImmutableList;
 import mutabor.MutableList;
 import mutabor.Mutabor;
 import mutabor.ReadOnlyList;
+import mutabor.internal.InternalUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,7 +17,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -47,7 +47,7 @@ public class MutaborTest {
 		
 		//проверяем, что исходный список очищен, если expectConversion
 		dump("original", original);
-		Assert.assertTrue(expectConversion ? original.isEmpty() : equalLists(original, immutable));
+		Assert.assertTrue(expectConversion ? original.isEmpty() : InternalUtils.equalIterables(original, immutable));
 		
 		System.out.println();
 	}
@@ -181,11 +181,11 @@ public class MutaborTest {
 	public void testImmutableToList() {
 		List<Long> listOriginal = makeList(100);
 		ImmutableList<Long> listConverted = Mutabor.copyToImmutableList(listOriginal);
-		Assert.assertTrue(equalLists(listOriginal, listConverted.toList()));
+		Assert.assertEquals(listOriginal, listConverted.toList());
 		
 		List<Long> subListOriginal = listOriginal.subList(10, 90);
 		ImmutableList<Long> subListConverted = listConverted.subList(10, 90);
-		Assert.assertTrue(equalLists(subListOriginal, subListConverted.toList()));
+		Assert.assertEquals(subListOriginal, subListConverted.toList());
 	}
 	
 	@SuppressWarnings("static-method")
@@ -202,19 +202,19 @@ public class MutaborTest {
 		
 		ImmutableList<Long> subListImmutable1 = listImmutable.subList(10, 90);
 		MutableList<Long> subListMutable1 = listMutable.subList(10, 90);
-		Assert.assertTrue(equalLists(subListImmutable1, subListMutable1));
+		Assert.assertEquals(subListImmutable1, subListMutable1);
 		
 		ImmutableList<Long> subListImmutable2 = subListImmutable1.subList(5, 65);
 		MutableList<Long> subListMutable2 = subListMutable1.subList(5, 65);
-		Assert.assertTrue(equalLists(subListImmutable2, subListMutable2));
+		Assert.assertEquals(subListImmutable2, subListMutable2);
 		
 		MutableList<Long> subListMutable2a = subListImmutable2.mutable();
-		Assert.assertTrue(equalLists(subListImmutable2, subListMutable2a));
-		Assert.assertTrue(equalLists(subListMutable2, subListMutable2a));
+		Assert.assertEquals(subListImmutable2, subListMutable2a);
+		Assert.assertEquals(subListMutable2, subListMutable2a);
 		subListMutable2a.add(Long.valueOf(-1)); //here MutableList should realize its mutability
 		subListMutable2a.remove(Long.valueOf(-1));
-		Assert.assertTrue(equalLists(subListImmutable2, subListMutable2a));
-		Assert.assertTrue(equalLists(subListMutable2, subListMutable2a));
+		Assert.assertEquals(subListImmutable2, subListMutable2a);
+		Assert.assertEquals(subListMutable2, subListMutable2a);
 	}
 	
 	@SuppressWarnings("static-method")
@@ -238,6 +238,13 @@ public class MutaborTest {
 		Assert.assertEquals(listImmutable1.hashCode(), listMutable1.hashCode());
 		Assert.assertEquals(listOriginal.hashCode(), listImmutable1.hashCode());
 		Assert.assertEquals(listOriginal.hashCode(), listMutable1.hashCode());
+		
+		List<Long> subListOriginal = listOriginal.subList(10, listOriginal.size() - 10);
+		ImmutableList<Long> subListImmutable = listImmutable1.subList(10, listImmutable1.size() - 10);
+		MutableList<Long> subListMutable = listMutable1.subList(10, listMutable1.size() - 10);
+		
+		Assert.assertEquals(subListOriginal.hashCode(), subListImmutable.hashCode());
+		Assert.assertEquals(subListOriginal.hashCode(), subListMutable.hashCode());
 	}
 	
 	protected static List<Long> makeList(int size) {
@@ -317,19 +324,6 @@ public class MutaborTest {
 				return ois.readObject();
 			}
 		}
-	}
-	
-	protected static boolean equalLists(Iterable<?> list1, Iterable<?> list2) {
-		Iterator<?> iter1 = list1.iterator();
-		Iterator<?> iter2 = list2.iterator();
-		while (iter1.hasNext() && iter2.hasNext()) {
-			Object o1 = iter1.next();
-			Object o2 = iter2.next();
-			if (!(o1 == null ? o2 == null : o1.equals(o2))) {
-				return false;
-			}
-		}
-		return !(iter1.hasNext() || iter2.hasNext());
 	}
 	
 	protected static void dump(String title, Iterable<?> list) {

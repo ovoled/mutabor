@@ -3,10 +3,12 @@ package mutabor.internal;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import mutabor.ImmutableList;
 import mutabor.MutableList;
+import mutabor.ReadOnlyList;
 import mutabor.internal.ImmutableListImpl;
 
 /**
@@ -89,6 +91,51 @@ public class InternalUtils {
 	
 	public static <E> MutableList<E> convertToMutableList(List<E> original) {
 		return new MutableListImpl<>(original);
+	}
+	
+	public static int hashCodeIterable(Iterable<?> iterable) {
+		//iterable must be ordered
+		
+		int hashCode = 1;
+		for (Object obj : iterable) {
+			hashCode = 31 * hashCode + (obj == null ? 0 : obj.hashCode());
+		}
+		return hashCode;
+	}
+	
+	public static boolean equalIterables(Iterable<?> iterable1, Iterable<?> iterable2) {
+		//iterables must be ordered
+		
+		Iterator<?> iterator1 = iterable1.iterator();
+		Iterator<?> iterator2 = iterable2.iterator();
+		while (iterator1.hasNext() && iterator2.hasNext()) {
+			Object o1 = iterator1.next();
+			Object o2 = iterator2.next();
+			if (!(o1 == null ? o2 == null : o1.equals(o2))) {
+				return false;
+			}
+		}
+		return !(iterator1.hasNext() || iterator2.hasNext());
+	}
+	
+	public static boolean equalLists(List<?> list1, Object list2) {
+		if (list1 == list2) {
+			return true;
+		}
+		if (!(list2 instanceof List<?> || list2 instanceof ReadOnlyList<?>)) {
+			return false;
+		}
+		return equalIterables(list1, (Iterable<?>) list2);
+	}
+	
+	public static boolean equalLists(ReadOnlyList<?> list1, Object list2) {
+		if (list1 == list2) {
+			return true;
+		}
+		if (!(list2 instanceof List<?> || list2 instanceof ImmutableList<?>)) {
+			return false;
+		}
+		return equalIterables(list1, (Iterable<?>) list2);
 	}
 	
 	protected static Object[] stealDataArray(Collection<?> original) {

@@ -343,6 +343,16 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 		}
 		
 		@Override
+		public boolean equals(Object o) {
+			return InternalUtils.equalLists(this, o);
+		}
+		
+		@Override
+		public int hashCode() {
+			return InternalUtils.hashCodeIterable(this);
+		}
+		
+		@Override
 		public List<E> toList() {
 			return new ListRepresentation<>(this);
 		}
@@ -355,42 +365,12 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 	
 	@Override
 	public boolean equals(Object o) {
-		if (o == this) {
-			return true;
-		}
-		
-		ListIterator<?> e2;
-		if (o instanceof List<?>) {
-			e2 = ((List<?>) o).listIterator();
-		} else if (o instanceof ImmutableList<?>) {
-			e2 = ((ImmutableList<?>) o).listIterator();
-		} else if (o instanceof MutableList<?>) {
-			e2 = ((MutableList<?>) o).listIterator();
-		} else {
-			return false;
-		}
-		
-		ListIterator<E> e1 = listIterator();
-		while (e1.hasNext() && e2.hasNext()) {
-			E o1 = e1.next();
-			Object o2 = e2.next();
-			if (!(o1 == null ? o2 == null : o1.equals(o2))) {
-				return false;
-			}
-		}
-		return !(e1.hasNext() || e2.hasNext());
+		return InternalUtils.equalLists(this, o);
 	}
 	
 	@Override
 	public int hashCode() {
-		//in order MutableListImpl.hashCode() to work correctly,
-		//this method must be identical to ArrayList.hashCode()
-		
-		int hashCode = 1;
-		for (E e : this) {
-			hashCode = 31 * hashCode + (e == null ? 0 : e.hashCode());
-		}
-		return hashCode;
+		return InternalUtils.hashCodeIterable(this);
 	}
 	
 	@Override

@@ -20,8 +20,8 @@ public class MutableListImpl<E> implements MutableList<E>, RandomAccess, Cloneab
 	
 	private static final long serialVersionUID = -4595544533083091008L;
 	
-	ImmutableList<E> immutable;
-	List<E> list;
+	protected ImmutableList<E> immutable;
+	protected List<E> list;
 	
 	protected MutableListImpl(ImmutableList<E> immutable) {
 		this.immutable = immutable;

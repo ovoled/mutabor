@@ -77,8 +77,19 @@ public class InternalUtils {
 			return new ImmutableListImpl<>(EMPTY_ARRAY);
 		}
 		
-		int size = original.size();
-		Object[] arr = stealDataArray(original);
+		Collection<? extends E> c = original;
+		if (c instanceof MutableListImpl<?>) {
+			@SuppressWarnings("unchecked")
+			MutableListImpl<E> mutable = (MutableListImpl<E>) original;
+			if (mutable.immutable != null) {
+				mutable.list = null;
+				return mutable.immutable;
+			}
+			c = mutable.list;
+		}
+		
+		int size = c.size();
+		Object[] arr = stealDataArray(c);
 		if (arr == null) {
 			return null;
 		}
@@ -91,6 +102,10 @@ public class InternalUtils {
 	}
 	
 	public static <E> MutableList<E> convertToMutableList(List<E> original) {
+		if (original instanceof MutableList<?>) {
+			return (MutableList<E>) original;
+		}
+		
 		return new MutableListImpl<>(original);
 	}
 	
@@ -140,7 +155,7 @@ public class InternalUtils {
 	}
 	
 	protected static Object[] stealDataArray(Collection<?> original) {
-		if (original instanceof ArrayList) {
+		if (original instanceof ArrayList<?>) {
 			if (data_ArrayList != null) {
 				try {
 					Object [] arr = (Object[]) data_ArrayList.get(original);

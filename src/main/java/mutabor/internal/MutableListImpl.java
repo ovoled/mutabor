@@ -14,7 +14,7 @@ import mutabor.MutableList;
 /**
  * Immutable list implementation.
  * @param <E> the type of elements in this list
- * @author Aleksej Kozlov
+ * @author Aleksej Kozlov {@literal <ovoled@gmail.com>}
  */
 public class MutableListImpl<E> implements MutableList<E>, RandomAccess, Cloneable, Serializable {
 	

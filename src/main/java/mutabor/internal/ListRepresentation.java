@@ -12,7 +12,7 @@ import mutabor.ImmutableList;
 /**
  * {@link java.util.List} representation of immutable list.
  * @param <E> the type of elements in this list
- * @author Aleksej Kozlov
+ * @author Aleksej Kozlov {@literal <ovoled@gmail.com>}
  */
 public class ListRepresentation<E> implements List<E>, RandomAccess, Cloneable, Serializable {
 	

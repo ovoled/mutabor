@@ -13,7 +13,7 @@ import mutabor.internal.ImmutableListImpl;
 
 /**
  * Internal utils for mutable & immutable lists.
- * @author Aleksej Kozlov
+ * @author Aleksej Kozlov {@literal <ovoled@gmail.com>}
  */
 public class InternalUtils {
 	

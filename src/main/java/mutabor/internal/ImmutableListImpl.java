@@ -15,7 +15,7 @@ import mutabor.MutableList;
  * Immutable list implementation.
  * Based on sources of {@link java.util.ArrayList} and {@link java.util.AbstractList}.
  * @param <E> the type of elements in this list
- * @author Aleksej Kozlov
+ * @author Aleksej Kozlov {@literal <ovoled@gmail.com>}
  */
 public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Cloneable, Serializable {
 	

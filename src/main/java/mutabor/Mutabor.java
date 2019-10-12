@@ -7,7 +7,7 @@ import mutabor.internal.InternalUtils;
 
 /**
  * Utils for mutable & immutable lists.
- * @author Aleksej Kozlov
+ * @author Aleksej Kozlov {@literal <ovoled@gmail.com>}
  */
 public class Mutabor {
 	

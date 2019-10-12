@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Immutable list.
  * @param <E> the type of elements in this list
- * @author Aleksej Kozlov
+ * @author Aleksej Kozlov {@literal <ovoled@gmail.com>}
  */
 public interface ImmutableList<E> extends ReadOnlyList<E> {
 	

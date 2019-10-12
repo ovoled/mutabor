@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Mutable list.
  * @param <E> the type of elements in this list
- * @author Aleksej Kozlov
+ * @author Aleksej Kozlov {@literal <ovoled@gmail.com>}
  */
 public interface MutableList<E> extends List<E> {
 	

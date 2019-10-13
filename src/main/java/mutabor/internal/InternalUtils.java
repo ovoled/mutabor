@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.RandomAccess;
 
 import mutabor.ImmutableList;
 import mutabor.MutableList;
@@ -98,7 +99,7 @@ public class InternalUtils {
 	}
 	
 	public static <E> MutableList<E> copyToMutableList(Collection<? extends E> original) {
-		return new MutableListImpl<>(new ArrayList<>(original));
+		return new RandomAccessMutableListImpl<>(new ArrayList<>(original));
 	}
 	
 	public static <E> MutableList<E> convertToMutableList(List<E> original) {
@@ -106,7 +107,7 @@ public class InternalUtils {
 			return (MutableList<E>) original;
 		}
 		
-		return new MutableListImpl<>(original);
+		return (original instanceof RandomAccess) ? new RandomAccessMutableListImpl<>(original) : new MutableListImpl<>(original);
 	}
 	
 	/*

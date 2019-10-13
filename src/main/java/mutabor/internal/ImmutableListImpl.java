@@ -370,7 +370,7 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 		
 		@Override
 		public MutableList<E> mutable() {
-			return new MutableListImpl<>(this);
+			return new RandomAccessMutableListImpl<>(this);
 		}
 	}
 	
@@ -396,6 +396,6 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 	
 	@Override
 	public MutableList<E> mutable() { 
-		return new MutableListImpl<>(this);
+		return new RandomAccessMutableListImpl<>(this);
 	}
 }

@@ -6,17 +6,16 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.RandomAccess;
 
 import mutabor.ImmutableList;
 import mutabor.MutableList;
 
 /**
- * Immutable list implementation.
+ * Immutable list implementation (without random access marker).
  * @param <E> the type of elements in this list
  * @author Aleksej Kozlov {@literal <ovoled@gmail.com>}
  */
-public class MutableListImpl<E> implements MutableList<E>, RandomAccess, Cloneable, Serializable {
+public class MutableListImpl<E> implements MutableList<E>, Cloneable, Serializable {
 	
 	private static final long serialVersionUID = -4595544533083091008L;
 	

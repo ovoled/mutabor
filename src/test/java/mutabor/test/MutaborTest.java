@@ -207,12 +207,14 @@ public class MutaborTest {
 		List<Long> listOriginal = makeArrayList(N_SMALL);
 		ImmutableList<Long> listConverted = Mutabor.copyToImmutableList(listOriginal);
 		Assert.assertEquals(listOriginal, listConverted.toList());
+		Assert.assertEquals(listConverted.toList(), listOriginal);
 		
 		int from = random.nextInt(10) + 1;
 		int to = listOriginal.size() - 1 - random.nextInt(10);
 		List<Long> subListOriginal = listOriginal.subList(from, to);
 		ImmutableList<Long> subListConverted = listConverted.subList(from, to);
 		Assert.assertEquals(subListOriginal, subListConverted.toList());
+		Assert.assertEquals(subListConverted.toList(), subListOriginal);
 	}
 	
 	@SuppressWarnings("static-method")
@@ -221,31 +223,31 @@ public class MutaborTest {
 		List<Long> listOriginal = makeArrayList(N_SMALL);
 		ImmutableList<Long> listImmutable = Mutabor.copyToImmutableList(listOriginal);
 		MutableList<Long> listMutable = listImmutable.mutable();
-		Assert.assertEquals(listImmutable, listMutable);
+		Assert.assertTrue(listImmutable.contentEquals(listMutable));
 		
 		listMutable.add(Long.valueOf(-1)); //here MutableList should realize its mutability
 		listMutable.remove(Long.valueOf(-1));
-		Assert.assertEquals(listImmutable, listMutable);
+		Assert.assertTrue(listImmutable.contentEquals(listMutable));
 		
 		int from1 = random.nextInt(10) + 1;
 		int to1 = listOriginal.size() - 1 - random.nextInt(10);
 		ImmutableList<Long> subListImmutable1 = listImmutable.subList(from1, to1);
 		MutableList<Long> subListMutable1 = listMutable.subList(from1, to1);
-		Assert.assertEquals(subListImmutable1, subListMutable1);
+		Assert.assertTrue(subListImmutable1.contentEquals(subListMutable1));
 		
 		int from2 = random.nextInt(10) + 1;
 		int to2 = to1 - from1 - 1 - random.nextInt(10);
 		ImmutableList<Long> subListImmutable2 = subListImmutable1.subList(from2, to2);
 		MutableList<Long> subListMutable2 = subListMutable1.subList(from2, to2);
-		Assert.assertEquals(subListImmutable2, subListMutable2);
+		Assert.assertTrue(subListImmutable2.contentEquals(subListMutable2));
 		
 		MutableList<Long> subListMutable2a = subListImmutable2.mutable();
-		Assert.assertEquals(subListImmutable2, subListMutable2a);
-		Assert.assertEquals(subListMutable2, subListMutable2a);
+		Assert.assertTrue(subListImmutable2.contentEquals(subListMutable2a));
+		Assert.assertTrue(subListMutable2.contentEquals(subListMutable2a));
 		subListMutable2a.add(Long.valueOf(-1)); //here MutableList should realize its mutability
 		subListMutable2a.remove(Long.valueOf(-1));
-		Assert.assertEquals(subListImmutable2, subListMutable2a);
-		Assert.assertEquals(subListMutable2, subListMutable2a);
+		Assert.assertTrue(subListImmutable2.contentEquals(subListMutable2a));
+		Assert.assertTrue(subListMutable2.contentEquals(subListMutable2a));
 	}
 	
 	@SuppressWarnings("static-method")
@@ -291,6 +293,8 @@ public class MutaborTest {
 		listMutable2.add(Long.valueOf(-1)); //here MutableList should realize its mutability
 		listMutable2.remove(Long.valueOf(-1));
 		
+		Assert.assertTrue(listImmutable1.contentEquals(listImmutable1));
+		Assert.assertTrue(listMutable1.contentEquals(listMutable1));
 		Assert.assertTrue(listImmutable1.contentEquals(listImmutable2));
 		Assert.assertTrue(listMutable1.contentEquals(listMutable2));
 		Assert.assertTrue(listImmutable1.contentEquals(listMutable1));
@@ -300,12 +304,18 @@ public class MutaborTest {
 		Assert.assertFalse(listImmutable1.contentEquals(null));
 		Assert.assertFalse(listMutable1.contentEquals(null));
 		
+		Assert.assertEquals(listImmutable1, listImmutable1);
+		Assert.assertEquals(listMutable1, listMutable1);
 		Assert.assertEquals(listImmutable1, listImmutable2);
 		Assert.assertEquals(listMutable1, listMutable2);
-		Assert.assertEquals(listImmutable1, listMutable1);
-		Assert.assertEquals(listMutable1, listImmutable1);
-		Assert.assertEquals(listImmutable1, listOriginal); //listImmutable1.equals(listOriginal) but not listOriginal.equals(listImmutable1)
+		Assert.assertNotEquals(listImmutable1, listMutable1);
+		Assert.assertNotEquals(listMutable1, listImmutable1);
+		Assert.assertNotEquals(listImmutable1, listOriginal);
+		Assert.assertNotEquals(listOriginal, listImmutable1);
 		Assert.assertEquals(listMutable1, listOriginal);
+		Assert.assertEquals(listOriginal, listMutable1);
+		Assert.assertNotEquals(listImmutable1, null);
+		Assert.assertNotEquals(listMutable1, null);
 		
 		Assert.assertEquals(listImmutable1.hashCode(), listImmutable2.hashCode());
 		Assert.assertEquals(listMutable1.hashCode(), listMutable2.hashCode());
@@ -337,18 +347,18 @@ public class MutaborTest {
 	
 	protected static void testMutableSnapshotStep(MutableList<Long> listMutable) {
 		ImmutableList<Long> snapshot1 = listMutable.snapshot();
-		Assert.assertEquals(listMutable, snapshot1);
+		Assert.assertTrue(listMutable.contentEquals(snapshot1));
 		ImmutableList<Long> snapshot2 = listMutable.snapshot();
 		Assert.assertTrue(snapshot1 == snapshot2);
 		listMutable.releaseSnapshot();
 		ImmutableList<Long> snapshot3 = listMutable.snapshot();
 		Assert.assertTrue(snapshot2 != snapshot3);
-		Assert.assertEquals(snapshot2, snapshot3);
+		Assert.assertTrue(snapshot2.contentEquals(snapshot3));
 		listMutable.add(Long.valueOf(-1)); //here MutableList should realize its mutability
 		listMutable.remove(Long.valueOf(-1));
 		ImmutableList<Long> snapshot4 = listMutable.snapshot();
 		Assert.assertTrue(snapshot3 != snapshot4);
-		Assert.assertEquals(snapshot3, snapshot4);
+		Assert.assertTrue(snapshot3.contentEquals(snapshot4));
 	}
 	
 	protected static List<Long> makeArrayList(int size) {

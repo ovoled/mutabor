@@ -138,4 +138,14 @@ public class ListRepresentation<E> implements List<E>, RandomAccess, Cloneable, 
 	public List<E> subList(int fromIndex, int toIndex) {
 		return list.subList(fromIndex, toIndex).toList();
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		return InternalUtils.equalLists(this, o);
+	}
+	
+	@Override
+	public int hashCode() {
+		return InternalUtils.hashCodeIterable(this);
+	}
 }

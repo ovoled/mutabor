@@ -109,9 +109,11 @@ public class InternalUtils {
 		return new MutableListImpl<>(original);
 	}
 	
+	/*
+	 * Calculates hash code of iterable.
+	 * Uses AbstractList algorithm.
+	 */
 	public static int hashCodeIterable(Iterable<?> iterable) {
-		//iterable must be ordered
-		
 		int hashCode = 1;
 		for (Object obj : iterable) {
 			hashCode = 31 * hashCode + (obj == null ? 0 : obj.hashCode());
@@ -145,7 +147,7 @@ public class InternalUtils {
 		if (list1 == list2) {
 			return true;
 		}
-		if (!(list2 instanceof List<?> || list2 instanceof ReadOnlyList<?>)) {
+		if (list2 == null || !(list2 instanceof List<?>)) {
 			return false;
 		}
 		return equalIterables(list1, (Iterable<?>) list2);
@@ -155,7 +157,7 @@ public class InternalUtils {
 		if (list1 == list2) {
 			return true;
 		}
-		if (!(list2 instanceof List<?> || list2 instanceof ReadOnlyList<?>)) {
+		if (list2 == null || !(list2 instanceof ReadOnlyList<?>)) {
 			return false;
 		}
 		return equalIterables(list1, (Iterable<?>) list2);

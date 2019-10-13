@@ -47,6 +47,16 @@ public interface MutableList<E> extends List<E> {
 	MutableList<E> subList(int fromIndex, int toIndex);
 	
 	/**
+	 * Compares contents of this list to the specified {@link java.lang.Iterable}.
+	 * The result is {@code true} if and only if this list represents the same
+	 * sequence of objects as the specified {@link java.lang.Iterable}.
+	 * @param iterable the {@link java.lang.Iterable} to compare this list against
+	 * @return {@code true} if this list represents the same sequence of objects
+	 * as the specified {@link java.lang.Iterable}, {@code false} otherwise
+	 */
+	boolean contentEquals(Iterable<? extends E> iterable);
+	
+	/**
 	 * Creates immutable snapshot of this list.
 	 * Snapshot is saved internally. Two calls of this method
 	 * will return the same object if list was not changed between calls.

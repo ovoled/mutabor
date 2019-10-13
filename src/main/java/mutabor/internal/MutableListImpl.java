@@ -205,6 +205,14 @@ public class MutableListImpl<E> implements MutableList<E>, RandomAccess, Cloneab
 	}
 	
 	@Override
+	public boolean contentEquals(Iterable<? extends E> iterable) {
+		if (immutable != null) {
+			return InternalUtils.equalIterables(immutable, iterable);
+		}
+		return InternalUtils.equalIterables(list, iterable);
+	}
+	
+	@Override
 	public ImmutableList<E> snapshot() {
 		if (immutable != null) {
 			return immutable;

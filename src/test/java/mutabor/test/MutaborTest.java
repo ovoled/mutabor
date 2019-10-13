@@ -288,6 +288,18 @@ public class MutaborTest {
 			ImmutableList<Long> listImmutable1, ImmutableList<Long> listImmutable2,
 			MutableList<Long> listMutable1, MutableList<Long> listMutable2) {
 		
+		listMutable2.add(Long.valueOf(-1)); //here MutableList should realize its mutability
+		listMutable2.remove(Long.valueOf(-1));
+		
+		Assert.assertTrue(listImmutable1.contentEquals(listImmutable2));
+		Assert.assertTrue(listMutable1.contentEquals(listMutable2));
+		Assert.assertTrue(listImmutable1.contentEquals(listMutable1));
+		Assert.assertTrue(listMutable1.contentEquals(listImmutable1));
+		Assert.assertTrue(listImmutable1.contentEquals(listOriginal));
+		Assert.assertTrue(listMutable1.contentEquals(listOriginal));
+		Assert.assertFalse(listImmutable1.contentEquals(null));
+		Assert.assertFalse(listMutable1.contentEquals(null));
+		
 		Assert.assertEquals(listImmutable1, listImmutable2);
 		Assert.assertEquals(listMutable1, listMutable2);
 		Assert.assertEquals(listImmutable1, listMutable1);

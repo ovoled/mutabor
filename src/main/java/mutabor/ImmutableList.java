@@ -26,6 +26,16 @@ public interface ImmutableList<E> extends ReadOnlyList<E> {
 	ImmutableList<E> subList(int fromIndex, int toIndex);
 	
 	/**
+	 * Compares contents of this list to the specified {@link java.lang.Iterable}.
+	 * The result is {@code true} if and only if this list represents the same
+	 * sequence of objects as the specified {@link java.lang.Iterable}.
+	 * @param iterable the {@link java.lang.Iterable} to compare this list against
+	 * @return {@code true} if this list represents the same sequence of objects
+	 * as the specified {@link java.lang.Iterable}, {@code false} otherwise
+	 */
+	boolean contentEquals(Iterable<? extends E> iterable);
+	
+	/**
 	 * Creates {@link java.util.List} representation of this list.
 	 * Representation is still read-only, all of it's modification methods
 	 * throws {@link java.lang.UnsupportedOperationException}.

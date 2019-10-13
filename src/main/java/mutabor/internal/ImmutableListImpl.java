@@ -359,6 +359,11 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 		}
 		
 		@Override
+		public boolean contentEquals(Iterable<? extends E> iterable) {
+			return InternalUtils.equalIterables(this, iterable);
+		}
+		
+		@Override
 		public List<E> toList() {
 			return new ListRepresentation<>(this);
 		}
@@ -377,6 +382,11 @@ public class ImmutableListImpl<E> implements ImmutableList<E>, RandomAccess, Clo
 	@Override
 	public int hashCode() {
 		return InternalUtils.hashCodeIterable(this);
+	}
+	
+	@Override
+	public boolean contentEquals(Iterable<? extends E> iterable) {
+		return InternalUtils.equalIterables(this, iterable);
 	}
 	
 	@Override

@@ -122,6 +122,13 @@ public class InternalUtils {
 	public static boolean equalIterables(Iterable<?> iterable1, Iterable<?> iterable2) {
 		//iterables must be ordered
 		
+		if (iterable1 == iterable2) {
+			return true;
+		}
+		if (iterable1 == null || iterable2 == null) {
+			return false;
+		}
+		
 		Iterator<?> iterator1 = iterable1.iterator();
 		Iterator<?> iterator2 = iterable2.iterator();
 		while (iterator1.hasNext() && iterator2.hasNext()) {
